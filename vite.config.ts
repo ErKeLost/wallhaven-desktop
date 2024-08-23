@@ -1,4 +1,7 @@
 import { defineConfig } from 'vite'
+import https from 'https';
+import path from 'path'
+import fs from 'fs'
 import { VarletImportResolver } from '@varlet/import-resolver'
 import { fileURLToPath, URL } from 'node:url'
 import vue from '@vitejs/plugin-vue'
@@ -7,6 +10,7 @@ import autoImport from 'unplugin-auto-import/vite'
 import components from 'unplugin-vue-components/vite'
 import vueRouter from 'unplugin-vue-router/vite'
 import unoCSS from 'unocss/vite'
+import basicSsl from '@vitejs/plugin-basic-ssl'
 
 export default defineConfig(() => ({
   base: './',
@@ -18,6 +22,7 @@ export default defineConfig(() => ({
   },
 
   plugins: [
+    // basicSsl(),
     vue({
       template: {
         transformAssetUrls: {
@@ -57,5 +62,21 @@ export default defineConfig(() => ({
     watch: {
       ignored: ['**/src-tauri/**'],
     },
+    // https: {
+    //   key: fs.readFileSync(path.resolve(__dirname, './localhost-key.pem')),
+    //   cert: fs.readFileSync(path.resolve(__dirname, './localhost.pem')),
+    // },
+    proxy: {
+      '/wallhaven': {
+        target: 'https://wallhaven.cc/api/v1/',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/wallhaven/, ''),
+      },
+      '/base': {
+        target: 'https://wallhaven.cc/api/v1/w/3lv8j6',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/base/, ''),
+      }
+    }
   },
 }))
