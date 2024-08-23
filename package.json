@@ -1,0 +1,43 @@
+{
+  "name": "varlet-tauri-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --force",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
+    "bump": "pnpm update @varlet/* --latest"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^1",
+    "@varlet/axle": "^0.8.0",
+    "@varlet/shared": "^3.3.13",
+    "@varlet/touch-emulator": "^3.3.13",
+    "@varlet/ui": "^3.3.13",
+    "@vueuse/core": "^10.11.0",
+    "echarts": "^5.5.1",
+    "mitt": "^3.0.1",
+    "vue": "^3.4.36",
+    "vue-router": "^4.4.3",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^1",
+    "@types/node": "^20.1.0",
+    "@varlet/import-resolver": "^3.3.13",
+    "@varlet/preset-unocss": "^3.3.13",
+    "@varlet/unplugin-icon-builder": "^0.5.0",
+    "@vitejs/plugin-vue": "^5.0.5",
+    "less": "^4.2.0",
+    "typescript": "^5.2.2",
+    "unocss": "^0.58.2",
+    "unplugin-auto-import": "^0.17.5",
+    "unplugin-vue-components": "^0.26.0",
+    "unplugin-vue-router": "^0.8.6",
+    "vite": "^5.3.1",
+    "vue-tsc": "^2.0.22"
+  }
+}
