@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@tauri-apps/api':
-        specifier: 1.6.0
-        version: 1.6.0
       '@varlet/axle':
         specifier: ^0.8.0
         version: 0.8.0(vue@3.4.36(typescript@5.5.4))
@@ -42,8 +39,11 @@ importers:
         specifier: ^3.23.8
         version: 3.23.8
     devDependencies:
+      '@tauri-apps/api':
+        specifier: ^1.6.0
+        version: 1.6.0
       '@tauri-apps/cli':
-        specifier: 1.6.0
+        specifier: ^1
         version: 1.6.0
       '@types/node':
         specifier: 22.5.0

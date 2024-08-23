@@ -75,6 +75,9 @@ export default defineConfig(() => ({
       '/base': {
         target: 'https://wallhaven.cc/api/v1/w/3lv8j6',
         changeOrigin: true,
+        agent: new https.Agent({
+          rejectUnauthorized: false
+        }),
         rewrite: (path) => path.replace(/^\/base/, ''),
       }
     }

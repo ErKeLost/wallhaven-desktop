@@ -12,7 +12,6 @@
     "bump": "pnpm update @varlet/* --latest"
   },
   "dependencies": {
-    "@tauri-apps/api": "1.6.0",
     "@varlet/axle": "^0.8.0",
     "@varlet/shared": "^3.3.13",
     "@varlet/touch-emulator": "^3.3.13",
@@ -25,7 +24,8 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "1.6.0",
+    "@tauri-apps/api": "^1.6.0",
+    "@tauri-apps/cli": "^1",
     "@types/node": "22.5.0",
     "@varlet/import-resolver": "^3.3.13",
     "@varlet/preset-unocss": "^3.3.13",
