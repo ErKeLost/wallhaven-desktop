@@ -62,10 +62,10 @@ export default defineConfig(() => ({
     watch: {
       ignored: ['**/src-tauri/**'],
     },
-    // https: {
-    //   key: fs.readFileSync(path.resolve(__dirname, './localhost-key.pem')),
-    //   cert: fs.readFileSync(path.resolve(__dirname, './localhost.pem')),
-    // },
+    https: {
+      key: fs.readFileSync(path.resolve(__dirname, './localhost-key.pem')),
+      cert: fs.readFileSync(path.resolve(__dirname, './localhost.pem')),
+    },
     proxy: {
       '/wallhaven': {
         target: 'https://wallhaven.cc/api/v1/',

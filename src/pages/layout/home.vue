@@ -9,11 +9,9 @@ import { listen } from "@tauri-apps/api/event";
 fetch("/base")
   .then((res) => res.json())
   .then(console.log);
-// console.log(res);
 async function changePaper() {
-  console.log("修改壁纸");
   await invoke("download_and_set_wallpaper", {
-    url: "https://w.wallhaven.cc/full/o5/wallhaven-o5q7mp.jpg",
+    url: "https://w.wallhaven.cc/full/yx/wallhaven-yx6e9l.jpg",
     fileName: "pic",
   });
 }
@@ -25,7 +23,7 @@ async function changePaper() {
 
     <app-page-content>
       <var-button @click="changePaper">修改壁纸</var-button>
-      <img src="../../assets/images/girl.jpg" style="width: 100%" alt="" />
+      <img src="../../assets/images/test.jpg" style="width: 100%" alt="" />
     </app-page-content>
   </app-page>
 </template>
