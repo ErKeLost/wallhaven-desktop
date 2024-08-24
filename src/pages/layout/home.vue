@@ -9,7 +9,7 @@ import { listen } from "@tauri-apps/api/event";
 const imageData = ref([]);
 const topQuery = reactive({
   page: 1,
-  toprange: "3d"
+  toprange: "1y"
 });
 async function query() {
   topQuery.page = topQuery.page + 1;

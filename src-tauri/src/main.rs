@@ -38,7 +38,6 @@ async fn download_and_set_wallpaper(app_handle: tauri::AppHandle,url: String, fi
     app_handle.emit_all("download_start", ()).unwrap();
     let bytes = response.bytes().await.map_err(|e| e.to_string())?;
     app_handle.emit_all("download_complete", ()).unwrap();
-    println!("{:?}", bytes.len());
     println!("{:?}", image_path);
     let mut file = File::create(&image_path).map_err(|e| e.to_string())?;
     file.write_all(&bytes).map_err(|e| e.to_string())?;
