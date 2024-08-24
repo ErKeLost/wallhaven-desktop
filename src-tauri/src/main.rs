@@ -11,7 +11,6 @@ use std::process::Command;
 use tauri::api::shell::open;
 use tauri::CustomMenuItem;
 use tauri::{command, Manager};
-
 #[cfg(windows)]
 use std::ffi::CString;
 #[cfg(windows)]
@@ -25,7 +24,7 @@ struct Payload {
 }
 
 #[command]
-async fn download_and_set_wallpaper(url: String, file_name: String) -> Result<(), String> {
+async fn download_and_set_wallpaper(app_handle: tauri::AppHandle,url: String, file_name: String) -> Result<(), String> {
     let mut image_path = dirs::home_dir().unwrap_or(PathBuf::from("."));
     let file_name_with_extension = format!("{}.jpg", file_name);
     image_path.push(file_name_with_extension);
@@ -36,7 +35,9 @@ async fn download_and_set_wallpaper(url: String, file_name: String) -> Result<()
     if !response.status().is_success() {
         return Err(format!("HTTP error: {}", response.status()));
     }
+    app_handle.emit_all("download_start", ()).unwrap();
     let bytes = response.bytes().await.map_err(|e| e.to_string())?;
+    app_handle.emit_all("download_complete", ()).unwrap();
     println!("{:?}", bytes.len());
     println!("{:?}", image_path);
     let mut file = File::create(&image_path).map_err(|e| e.to_string())?;

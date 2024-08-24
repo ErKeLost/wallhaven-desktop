@@ -16,9 +16,11 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 dirs = "5.0"
 mio = '^1.0.1'
-reqwest = "0.12.7"
+reqwest = { version = "0.12.7", features = ["stream"] }
+futures-util = "0.3"
 winapi = { version = "0.3", features = ["winuser", "winreg"] }
-
+log = "0.4"
+env_logger = "0.10"
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
 custom-protocol = ["tauri/custom-protocol"]

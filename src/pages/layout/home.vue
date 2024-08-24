@@ -30,6 +30,25 @@ async function changePaper(item) {
 async function queryPaper() {
   query();
 }
+
+
+
+listen('download_start', () => {
+  // 显示loading
+  // showLoading();
+  console.log("download_start");
+});
+
+listen('download_complete', () => {
+  // 显示loading
+  // showLoading();
+  console.log("download_complete");
+});
+
+function updateProgressBar(percent) {
+  // 更新进度条的逻辑
+  console.log(percent);
+}
 </script>
 
 <template>
