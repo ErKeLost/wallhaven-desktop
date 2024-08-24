@@ -44,11 +44,6 @@ listen('download_complete', () => {
   // showLoading();
   console.log("download_complete");
 });
-
-function updateProgressBar(percent) {
-  // 更新进度条的逻辑
-  console.log(percent);
-}
 </script>
 
 <template>
