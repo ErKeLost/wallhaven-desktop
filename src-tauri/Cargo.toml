@@ -17,6 +17,7 @@ serde_json = "1"
 dirs = "5.0"
 mio = '^1.0.1'
 reqwest = "0.12.7"
+winapi = { version = "0.3", features = ["winuser", "winreg"] }
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
