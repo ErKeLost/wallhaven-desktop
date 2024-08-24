@@ -62,18 +62,18 @@ export default defineConfig(() => ({
     watch: {
       ignored: ['**/src-tauri/**'],
     },
-    https: {
-      key: fs.readFileSync(path.resolve(__dirname, './localhost-key.pem')),
-      cert: fs.readFileSync(path.resolve(__dirname, './localhost.pem')),
-    },
+    // https: {
+      // key: fs.readFileSync(path.resolve(__dirname, './localhost-key.pem')),
+    //   cert: fs.readFileSync(path.resolve(__dirname, './localhost.pem')),
+    // },
     proxy: {
       '/wallhaven': {
-        target: 'https://wallhaven.cc/api/v1/',
+        target: 'https://heaven-walls-api.vercel.app/api/wallhaven',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/wallhaven/, ''),
       },
       '/base': {
-        target: 'https://wallhaven.cc/api/v1/w/3lv8j6',
+        target: 'https://heaven-walls-api.vercel.app/api/wallhaven/w/3lv8j6',
         changeOrigin: true,
         agent: new https.Agent({
           rejectUnauthorized: false

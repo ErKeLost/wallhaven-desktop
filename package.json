@@ -17,8 +17,13 @@
     "@varlet/touch-emulator": "^3.3.13",
     "@varlet/ui": "^3.3.13",
     "@vueuse/core": "11.0.1",
+    "cors": "^2.8.5",
     "echarts": "^5.5.1",
+    "express": "^4.19.2",
+    "http-proxy-middleware": "^3.0.0",
     "mitt": "^3.0.1",
+    "morgan": "^1.10.0",
+    "tiny": "^0.0.10",
     "vue": "^3.4.36",
     "vue-router": "^4.4.3",
     "zod": "^3.23.8"

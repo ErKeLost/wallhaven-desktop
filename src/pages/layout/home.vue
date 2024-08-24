@@ -6,7 +6,7 @@ import { listen } from "@tauri-apps/api/event";
 // const axle = createAxle();
 
 // const res = await axle.get("/wallhaven/w/3lv8j6");
-fetch("/base")
+fetch("https://heaven-walls-api.vercel.app/api/wallhaven/w/3lv8j6")
   .then((res) => res.json())
   .then(console.log);
 async function changePaper() {
