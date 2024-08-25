@@ -1,4 +1,4 @@
-# Wallhaven Desktop
+# Wallhaven Desktop WIP
 
 Create top desktop wallpaper software based on wallhaven api
 
