@@ -24,9 +24,11 @@
     "postcss": "^8.4.41",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "styled-components": "^6.1.12",
     "tailwind-merge": "^2.5.2",
     "tailwindcss": "^3.4.10",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+   "swiper": "^10.0.0"
   },
   "devDependencies": {
     "@farmfe/cli": "^1.0.4",
