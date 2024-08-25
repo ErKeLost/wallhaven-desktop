@@ -5,6 +5,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 import Image from "@/components/ui/image";
 import { Carousel, Card } from "@/components/ui/cards-carousel";
 import { useDownloadListeners } from "./hooks/use-listen-download";
+import WallpaperPreviewDialog from "@/components/wallpaper-preview-dialog";
 import Swiper from "@/components/swiper";
 function App() {
   const [imageData, setImageData] = useState([]);
@@ -72,6 +73,7 @@ function App() {
 export function CardsCarousel({ imageData, onChangePaper }) {
   return (
     <div className="w-full h-full">
+      <WallpaperPreviewDialog />
       <Swiper data={imageData} />
       {/* <Carousel items={cards} /> */}
     </div>
