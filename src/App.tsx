@@ -10,7 +10,7 @@ import Swiper from "@/components/swiper";
 function App() {
   const [imageData, setImageData] = useState([]);
   const [topQuery, setTopQuery] = useState({
-    page: 1,
+    page: 3,
     toprange: "2y",
   });
 
@@ -61,11 +61,26 @@ function App() {
       }
     };
   }, [isListening, stopListening]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
+  const handleImageClick = (item) => {
+    setSelectedImage(item);
+    setIsDialogOpen(true);
+  };
   return (
     <div>
-      <CardsCarousel imageData={imageData} onChangePaper={changePaper} />
-      {/* <ModeToggle /> */}
+      <WallpaperPreviewDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        image={selectedImage}
+        changePaper={changePaper}
+      />
+      <ModeToggle />
+      <Swiper
+        data={imageData}
+        onImageClick={handleImageClick}
+      />
     </div>
   );
 }
@@ -73,8 +88,7 @@ function App() {
 export function CardsCarousel({ imageData, onChangePaper }) {
   return (
     <div className="w-full h-full">
-      <WallpaperPreviewDialog />
-      <Swiper data={imageData} />
+
       {/* <Carousel items={cards} /> */}
     </div>
   );

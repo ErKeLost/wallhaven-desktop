@@ -76,7 +76,6 @@ const OptimizedImage = forwardRef(
 
     return (
       <div style={containerStyle}>
-        <img src={src} alt="" />
         {loading && placeholder !== "empty" && (
           <div
             style={{

@@ -9,7 +9,7 @@ import 'swiper/css/effect-cards';
 // import required modules
 import { EffectCards } from 'swiper/modules';
 
-export default function App({data}) {
+export default function App({ data, changePaper, onImageClick }) {
   return (
     <>
       <Swiper
@@ -21,7 +21,7 @@ export default function App({data}) {
         {data?.map((item) => {
           return (
             <SwiperSlide key={item.id}>
-              <img className='w-full h-full object-cover' src={item.path} alt="wallpaper" onClick={() => console.log(123123)} />
+              <img className='w-full h-full object-cover' src={item.path} alt="wallpaper" onClick={() => onImageClick(item)} />
             </SwiperSlide>
           )
         })}

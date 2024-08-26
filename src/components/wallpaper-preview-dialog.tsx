@@ -60,7 +60,7 @@ import { useState } from "react"
 //   )
 // }
 
-import { Copy } from "lucide-react"
+import { Copy, Download, Heart } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -76,43 +76,48 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-export default function DialogCloseButton() {
+export default function WallpaperPreviewDialog({ isOpen, onClose, image, changePaper }) {
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  if (!image) return null;
+
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline">Share</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Share link</DialogTitle>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="w-[95vw] h-[95vh] sm:w-[90vw] sm:h-[90vh] md:w-[80vw] md:h-[80vh] lg:w-[70vw] lg:h-[70vh] xl:w-[60vw] xl:h-[60vh] max-w-[1200px] max-h-[800px] flex flex-col">
+        <DialogHeader className="flex-shrink-0">
+          <DialogTitle>壁纸预览</DialogTitle>
           <DialogDescription>
-            Anyone who has this link will be able to view this.
+            高清壁纸 - ID：{image.id}
           </DialogDescription>
         </DialogHeader>
-        <div className="flex items-center space-x-2">
-          <div className="grid flex-1 gap-2">
-            <Label htmlFor="link" className="sr-only">
-              Link
-            </Label>
-            <Input
-              id="link"
-              defaultValue="https://ui.shadcn.com/docs/installation"
-              readOnly
-            />
-          </div>
-          <Button type="submit" size="sm" className="px-3">
-            <span className="sr-only">Copy</span>
-            <Copy className="h-4 w-4" />
-          </Button>
+        <div className="flex-grow overflow-y-auto mt-4" onClick={() => changePaper(image)}>
+          <Image
+            src={image.path}
+            alt="Wallpaper preview"
+            width="100%"
+            height="100%"
+            className="w-full h-auto object-contain max-h-full rounded-lg shadow-lg"
+          />
         </div>
-        <DialogFooter className="sm:justify-start">
-          <DialogClose asChild>
-            <Button type="button" variant="secondary">
-              Close
+        <div className="flex-shrink-0 mt-4 flex justify-between items-center">
+          <div className="text-sm text-muted-foreground">
+            分辨率：{image.resolution || '未知'}
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="icon" onClick={() => setIsFavorite(!isFavorite)}>
+              <Heart className={isFavorite ? "fill-red-500 text-red-500" : ""} />
             </Button>
-          </DialogClose>
+            <Button variant="outline" size="icon" onClick={() => changePaper(image)}>
+              <Download />
+            </Button>
+          </div>
+        </div>
+        <DialogFooter className="flex-shrink-0 sm:justify-start mt-4">
+          {/* <Button type="button" variant="secondary" onClick={onClose}>
+            关闭
+          </Button> */}
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

@@ -6,7 +6,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "varlet-tauri-app",
+    "productName": "Farm-React19-wallhaven",
     "version": "0.0.0"
   },
   "tauri": {
@@ -19,9 +19,9 @@
     },
     "windows": [
       {
-        "title": "varlet-tauri-app",
-        "width": 800,
-        "height": 600
+        "title": "Farm-React19-wallhaven",
+        "width": 1200,
+        "height": 800
       }
     ],
     "security": {
