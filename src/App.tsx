@@ -10,7 +10,7 @@ import Swiper from "@/components/swiper";
 function App() {
   const [imageData, setImageData] = useState([]);
   const [topQuery, setTopQuery] = useState({
-    page: 3,
+    page: 1,
     toprange: "2y",
   });
 
