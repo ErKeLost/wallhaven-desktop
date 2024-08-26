@@ -1,4 +1,4 @@
-# Wallhaven Desktop WIP
+# Wallhaven Desktop (WIP)
 
 Create top desktop wallpaper software based on wallhaven api
 
@@ -6,4 +6,4 @@ Create top desktop wallpaper software based on wallhaven api
 
 Farm + React19 + Tauri + Shadcn/UI
 
-![image](https://github.com/user-attachments/assets/3d9c5c66-f876-4c10-b5e2-695f98b43ff0)
+<img width="2355" alt="image" src="https://github.com/user-attachments/assets/ebc9427d-6ba2-4a01-82b7-d5edd1e10c6b">
