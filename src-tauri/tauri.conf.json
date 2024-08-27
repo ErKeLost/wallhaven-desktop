@@ -20,6 +20,8 @@
     "windows": [
       {
         "title": "Farm-React19-wallhaven",
+        "hiddenTitle": true,
+        "titleBarStyle": "Overlay",
         "transparent": true,
         "width": 1200,
         "height": 800
