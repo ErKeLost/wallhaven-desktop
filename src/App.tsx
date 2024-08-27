@@ -32,7 +32,7 @@ function App() {
     await invoke("download_and_set_wallpaper", {
       url: item.path,
       fileName: "wallhaven-" + item.id,
-      resolutions: `${3800}x${2400}`
+      // resolutions: `${9999}x${1000}`
     });
   };
 
