@@ -3,7 +3,11 @@
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 use dirs;
+use image::imageops::FilterType;
+use image::ImageFormat;
 use reqwest;
+#[cfg(windows)]
+use std::ffi::CString;
 use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
@@ -11,8 +15,6 @@ use std::process::Command;
 use tauri::api::shell::open;
 use tauri::CustomMenuItem;
 use tauri::{command, Manager};
-#[cfg(windows)]
-use std::ffi::CString;
 #[cfg(windows)]
 use winapi::um::winuser::SystemParametersInfoA;
 #[cfg(windows)]
@@ -24,7 +26,12 @@ struct Payload {
 }
 
 #[command]
-async fn download_and_set_wallpaper(app_handle: tauri::AppHandle,url: String, file_name: String) -> Result<(), String> {
+async fn download_and_set_wallpaper(
+    app_handle: tauri::AppHandle,
+    url: String,
+    file_name: String,
+    resolutions: Option<String>
+) -> Result<(), String> {
     let mut image_path = dirs::home_dir().unwrap_or(PathBuf::from("."));
     let file_name_with_extension = format!("{}.jpg", file_name);
     image_path.push(file_name_with_extension);
@@ -36,11 +43,32 @@ async fn download_and_set_wallpaper(app_handle: tauri::AppHandle,url: String, fi
         return Err(format!("HTTP error: {}", response.status()));
     }
     app_handle.emit_all("download_start", ()).unwrap();
+    // let bytes: [u8] = response.bytes().await.map_err(|e| e.to_string())?;
     let bytes = response.bytes().await.map_err(|e| e.to_string())?;
+
     app_handle.emit_all("download_complete", ()).unwrap();
-    println!("{:?}", image_path);
-    let mut file = File::create(&image_path).map_err(|e| e.to_string())?;
-    file.write_all(&bytes).map_err(|e| e.to_string())?;
+    if let Some(resolution) = resolutions {
+        // 如果提供了分辨率，则调整图片大小
+        let parts: Vec<&str> = resolution.split('x').collect();
+        if parts.len() != 2 {
+            return Err("Invalid resolution format".to_string());
+        }
+        let width: u32 = parts[0].parse().map_err(|_| "Invalid width")?;
+        let height: u32 = parts[1].parse().map_err(|_| "Invalid height")?;
+        println!("调整图片大小 开始下载带分辨率的");
+        let img = image::load_from_memory(&bytes).map_err(|e| e.to_string())?;
+        println!("{:?}", img);
+        let resized = img.resize_exact(width, height, FilterType::Lanczos3);
+        println!("{:?}", resized);
+        resized
+            .save_with_format(&image_path, ImageFormat::Jpeg)
+            .map_err(|e| e.to_string())?;
+    } else {
+        println!("直接提供原始图片");
+        // 如果没有提供分辨率，直接保存原始图片
+        let mut file = File::create(&image_path).map_err(|e| e.to_string())?;
+        file.write_all(&bytes).map_err(|e| e.to_string())?;
+    }
 
     change_wallpaper(image_path.to_str().unwrap().to_string())
 }
