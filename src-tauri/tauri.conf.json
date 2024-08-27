@@ -20,6 +20,7 @@
     "windows": [
       {
         "title": "Farm-React19-wallhaven",
+        "transparent": true,
         "width": 1200,
         "height": 800
       }
