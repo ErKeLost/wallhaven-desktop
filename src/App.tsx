@@ -25,6 +25,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/effect-cards';
 import { A11y, Autoplay, Navigation, Pagination } from "swiper/modules";
+import { Input } from "./components/ui/input";
 function App() {
   const [imageData, setImageData] = useState([]);
   const [topQuery, setTopQuery] = useState({
@@ -105,6 +106,7 @@ function App() {
       {/* <ModeToggle /> */}
       <div className="flex justify-between p-4">
         <img src="https://wallhaven.cc/images/layout/logo.png" alt="wallhaven"></img>
+        <Search />
       </div>
       {/* <Swiper
         data={imageData}
@@ -347,4 +349,65 @@ export function DockDemo() {
       </Dock>
     </TooltipProvider>
   );
+}
+
+
+export function Search() {
+  return (
+    <div className="bg-background rounded-lg shadow-sm p-4 w-[20%]">
+      <div className="relative">
+        <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+        <Input
+          type="search"
+          placeholder="Search..."
+          className="pl-10 pr-10 rounded-md border border-input bg-transparent py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        />
+        <Button variant="ghost" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2">
+          <XIcon className="w-5 h-5" />
+          <span className="sr-only">Clear</span>
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+function SearchIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.3-4.3" />
+    </svg>
+  )
+}
+
+
+function XIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M18 6 6 18" />
+      <path d="m6 6 12 12" />
+    </svg>
+  )
 }
