@@ -10,6 +10,9 @@ export default defineConfig({
       alias: {
         "@": path.resolve(__dirname, "src"),
       }
+    },
+    output: {
+      targetEnv: 'browser-esnext'
     }
   },
   server: {

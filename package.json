@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "farm",
-    "build": "tsc && farm build",
+    "build": "farm build",
     "preview": "farm preview",
     "tauri": "tauri"
   },
