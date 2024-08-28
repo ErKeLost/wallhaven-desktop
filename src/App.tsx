@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { listen } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/tauri";
 import { ModeToggle } from "@/components/mode-toggle";
@@ -24,7 +24,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/effect-cards';
-import { A11y, Navigation, Pagination } from "swiper/modules";
+import { A11y, Autoplay, Navigation, Pagination } from "swiper/modules";
 function App() {
   const [imageData, setImageData] = useState([]);
   const [topQuery, setTopQuery] = useState({
@@ -87,6 +87,13 @@ function App() {
     setSelectedImage(item);
     setIsDialogOpen(true);
   };
+  const swiperRef = useRef(null);
+
+  useEffect(() => {
+    if (swiperRef.current && swiperRef.current.swiper) {
+      swiperRef.current.swiper.autoplay.start();
+    }
+  }, []);
   return (
     <div>
       <WallpaperPreviewDialog
@@ -104,58 +111,82 @@ function App() {
         onImageClick={handleImageClick}
       /> */}
       {/* <ParallaxScroll images={imageData} /> */}
-      <main className=" px-4 py-12">
-        <div className="relative mb-16 rounded-2xl overflow-hidden shadow-2xl w-[60%]">
-          <Swiper
-            modules={[Navigation, Pagination, A11y]}
-            spaceBetween={0}
-            slidesPerView={1}
-            navigation={{
-              prevEl: '.swiper-button-prev',
-              nextEl: '.swiper-button-next',
-            }}
-            pagination={{ clickable: true }}
-            loop={true}
-            className="h-[60vh]"
-          >
-            {imageData.map((wallpaper) => (
-              <SwiperSlide key={wallpaper.id}>
-                <div className="relative h-full"
-                  onClick={() => handleImageClick(wallpaper)}
-                >
-                  <img
-                    src={wallpaper.path}
-                    alt={wallpaper.alt}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-8">
-                    <div className="w-full">
-                      <h2 className="text-5xl font-bold mb-4 tracking-tight">{wallpaper.title}</h2>
-                      <p className="text-xl text-gray-300 mb-6 max-w-2xl">探索每日精心挑选的壁纸，让您的屏幕焕发艺术光彩。</p>
-                      <div className="flex space-x-4">
-                        <Button className="bg-white text-black hover:bg-gray-200 transition-colors">
-                          立即下载
-                        </Button>
-                        <Button variant="outline" className="text-white border-white hover:bg-white/20 transition-colors">
-                          查看详情
-                        </Button>
+      <main className=" px-4 py-12 flex gap-12">
+        <div className="relative rounded-2xl overflow-hidden shadow-2xl w-[60%]">
+          {imageData.length && (
+            <Swiper
+              ref={swiperRef}
+              modules={[Navigation, Pagination, A11y, Autoplay]}
+              spaceBetween={0}
+              slidesPerView={1}
+              navigation={{
+                prevEl: '.swiper-button-prev',
+                nextEl: '.swiper-button-next',
+              }}
+              pagination={{ clickable: true }}
+              loop={true}
+              autoplay={{
+                delay: 3000,
+                disableOnInteraction: false,
+              }}
+              className="h-[45vh]"
+            >
+              {imageData?.map((wallpaper) => (
+                <SwiperSlide key={wallpaper.id}>
+                  <div className="relative h-full"
+                    onClick={() => handleImageClick(wallpaper)}
+                  >
+                    <img
+                      src={wallpaper.path}
+                      alt={wallpaper.alt}
+                      className="w-full h-full object-cover"
+                    />
+                    {/* <Image src={wallpaper.path} alt={wallpaper.alt} /> */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-8">
+                      <div className="w-full">
+                        <h2 className="text-5xl font-bold mb-4 tracking-tight">{wallpaper.title}</h2>
+                        <p className="text-xl text-gray-300 mb-6 max-w-2xl">探索每日精心挑选的壁纸，让您的屏幕焕发艺术光彩。</p>
+                        <div className="flex space-x-4">
+                          <Button className="bg-white text-black hover:bg-gray-200 transition-colors">
+                            立即下载
+                          </Button>
+                          <Button variant="outline" className="text-white border-white hover:bg-white/20 transition-colors">
+                            查看详情
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </SwiperSlide>
-            ))}
-            <div className="swiper-button-prev absolute left-4 top-1/2 z-10 transform -translate-y-1/2">
-              <Button size="icon" variant="ghost" className="text-white hover:text-purple-400 transition-colors">
-                <ChevronLeft className="h-8 w-8" />
-              </Button>
+                </SwiperSlide>
+              ))}
+              <div className="swiper-button-prev absolute left-4 top-1/2 z-10 transform -translate-y-1/2">
+                <Button size="icon" variant="ghost" className="text-white hover:text-purple-400 transition-colors">
+                  <ChevronLeft className="h-8 w-8" />
+                </Button>
+              </div>
+              <div className="swiper-button-next absolute right-4 top-1/2 z-10 transform -translate-y-1/2">
+                <Button size="icon" variant="ghost" className="text-white hover:text-purple-400 transition-colors">
+                  <ChevronRight className="h-8 w-8" />
+                </Button>
+              </div>
+            </Swiper>
+          )}
+
+        </div>
+        <div className="w-[40%] flex flex-col">
+          <div className="h-1/2 mb-4 rounded-2xl overflow-hidden shadow-lg">
+            <div className="bg-gray-200 h-full p-4">
+              <h3 className="text-2xl font-bold mb-2">右上部分标题</h3>
+              <p>这里是右上部分的内容。</p>
             </div>
-            <div className="swiper-button-next absolute right-4 top-1/2 z-10 transform -translate-y-1/2">
-              <Button size="icon" variant="ghost" className="text-white hover:text-purple-400 transition-colors">
-                <ChevronRight className="h-8 w-8" />
-              </Button>
+          </div>
+
+          <div className="h-1/2 rounded-2xl overflow-hidden shadow-lg">
+            <div className="bg-gray-300 h-full p-4">
+              <h3 className="text-2xl font-bold mb-2">右下部分标题</h3>
+              <p>这里是右下部分的内容。</p>
             </div>
-          </Swiper>
+          </div>
         </div>
       </main>
       <DockDemo />
