@@ -3,7 +3,7 @@ import { listen } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/tauri";
 import { ModeToggle } from "@/components/mode-toggle";
 import Image from "@/components/ui/image";
-import { Carousel, Card } from "@/components/ui/cards-carousel";
+import { Carousel } from "@/components/ui/cards-carousel";
 import { useDownloadListeners } from "./hooks/use-listen-download";
 import WallpaperPreviewDialog from "@/components/wallpaper-preview-dialog";
 import Swiper from "@/components/swiper";
@@ -13,19 +13,30 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { CalendarIcon, ChevronLeft, ChevronRight, HomeIcon, MailIcon, PencilIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  HomeIcon,
+  MailIcon,
+  PencilIcon,
+} from "lucide-react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Dock, DockIcon } from "@/components/ui/dock";
 import { cn } from "./lib/utils";
 import { ParallaxScroll } from "./components/ui/parallax-scroll";
-import { Swiper, SwiperSlide } from 'swiper/react';
+import { Swiper, SwiperSlide } from "swiper/react";
 
 // Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/effect-cards';
+import "swiper/css";
+import "swiper/css/effect-cards";
 import { A11y, Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Input } from "./components/ui/input";
+import { motion } from "framer-motion";
+import { CardContent, Card } from "./components/ui/card";
+import { Badge } from "./components/ui/badge";
 function App() {
   const [imageData, setImageData] = useState([]);
   const [topQuery, setTopQuery] = useState({
@@ -95,6 +106,33 @@ function App() {
       swiperRef.current.swiper.autoplay.start();
     }
   }, []);
+
+  const recentWallpapers = [
+    {
+      id: 4,
+      title: "霓虹都市",
+      thumbnail: "/placeholder.svg?height=150&width=250",
+      downloads: 15000,
+    },
+    {
+      id: 5,
+      title: "山川湖泊",
+      thumbnail: "/placeholder.svg?height=150&width=250",
+      downloads: 12000,
+    },
+    {
+      id: 6,
+      title: "极光奇观",
+      thumbnail: "/placeholder.svg?height=150&width=250",
+      downloads: 10000,
+    },
+    {
+      id: 7,
+      title: "海滩日落",
+      thumbnail: "/placeholder.svg?height=150&width=250",
+      downloads: 9000,
+    },
+  ];
   return (
     <div>
       <WallpaperPreviewDialog
@@ -105,7 +143,6 @@ function App() {
       />
       {/* <ModeToggle /> */}
       <div className="flex justify-between p-4">
-        <img src="https://wallhaven.cc/images/layout/logo.png" alt="wallhaven"></img>
         <Search />
       </div>
       {/* <Swiper
@@ -113,7 +150,7 @@ function App() {
         onImageClick={handleImageClick}
       /> */}
       {/* <ParallaxScroll images={imageData} /> */}
-      <main className=" px-4 py-12 flex gap-12">
+      <main className=" px-4 py-12 flex gap-10">
         <div className="relative rounded-2xl overflow-hidden shadow-2xl w-[60%]">
           {imageData.length && (
             <Swiper
@@ -122,8 +159,8 @@ function App() {
               spaceBetween={0}
               slidesPerView={1}
               navigation={{
-                prevEl: '.swiper-button-prev',
-                nextEl: '.swiper-button-next',
+                prevEl: ".swiper-button-prev",
+                nextEl: ".swiper-button-next",
               }}
               pagination={{ clickable: true }}
               loop={true}
@@ -135,7 +172,8 @@ function App() {
             >
               {imageData?.map((wallpaper) => (
                 <SwiperSlide key={wallpaper.id}>
-                  <div className="relative h-full"
+                  <div
+                    className="relative h-full"
                     onClick={() => handleImageClick(wallpaper)}
                   >
                     <img
@@ -146,13 +184,20 @@ function App() {
                     {/* <Image src={wallpaper.path} alt={wallpaper.alt} /> */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-8">
                       <div className="w-full">
-                        <h2 className="text-5xl font-bold mb-4 tracking-tight">{wallpaper.title}</h2>
-                        <p className="text-xl text-gray-300 mb-6 max-w-2xl">探索每日精心挑选的壁纸，让您的屏幕焕发艺术光彩。</p>
+                        <h2 className="text-5xl font-bold mb-4 tracking-tight">
+                          {wallpaper.title}
+                        </h2>
+                        <p className="text-xl text-gray-300 mb-6 max-w-2xl">
+                          探索每日精心挑选的壁纸，让您的屏幕焕发艺术光彩。
+                        </p>
                         <div className="flex space-x-4">
                           <Button className="bg-white text-black hover:bg-gray-200 transition-colors">
                             立即下载
                           </Button>
-                          <Button variant="outline" className="text-white border-white hover:bg-white/20 transition-colors">
+                          <Button
+                            variant="outline"
+                            className="text-white border-white hover:bg-white/20 transition-colors"
+                          >
                             查看详情
                           </Button>
                         </div>
@@ -162,37 +207,69 @@ function App() {
                 </SwiperSlide>
               ))}
               <div className="swiper-button-prev absolute left-4 top-1/2 z-10 transform -translate-y-1/2">
-                <Button size="icon" variant="ghost" className="text-white hover:text-purple-400 transition-colors">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="text-white hover:text-purple-400 transition-colors"
+                >
                   <ChevronLeft className="h-8 w-8" />
                 </Button>
               </div>
               <div className="swiper-button-next absolute right-4 top-1/2 z-10 transform -translate-y-1/2">
-                <Button size="icon" variant="ghost" className="text-white hover:text-purple-400 transition-colors">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="text-white hover:text-purple-400 transition-colors"
+                >
                   <ChevronRight className="h-8 w-8" />
                 </Button>
               </div>
             </Swiper>
           )}
-
         </div>
         <div className="w-[40%] flex flex-col">
-          <div className="h-1/2 mb-4 rounded-2xl overflow-hidden shadow-lg">
-            <div className="bg-gray-200 h-full p-4">
-              <h3 className="text-2xl font-bold mb-2">右上部分标题</h3>
-              <p>这里是右上部分的内容。</p>
-            </div>
-          </div>
-
-          <div className="h-1/2 rounded-2xl overflow-hidden shadow-lg">
-            <div className="bg-gray-300 h-full p-4">
-              <h3 className="text-2xl font-bold mb-2">右下部分标题</h3>
-              <p>这里是右下部分的内容。</p>
-            </div>
-          </div>
+          <Card className="bg-gray-800 border-none shadow-xl">
+            <CardContent className="p-6">
+              <div className="text-2xl font-bold text-white mb-4">最近更新</div>
+              <div className="grid grid-cols-2 gap-4">
+                {imageData.slice(0, 4).map((wallpaper) => (
+                  <motion.div
+                    key={wallpaper.id}
+                    className="relative rounded-lg overflow-hidden cursor-pointer group"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                          <img
+                      src={wallpaper.path}
+                      alt={wallpaper.alt}
+                      className="w-full h-full object-cover"
+                    />
+                   </motion.div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-gray-800 border-none shadow-xl">
+            <CardContent className="p-6">
+              <h3 className="text-2xl font-bold text-white mb-4">热门分类</h3>
+              <div className="flex flex-wrap gap-2">
+                {["自然", "动物", "建筑", "艺术", "科技", "抽象"].map(
+                  (category) => (
+                    <Badge
+                      key={category}
+                      className="bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 cursor-pointer transition-colors"
+                    >
+                      {category}
+                    </Badge>
+                  )
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </main>
       <DockDemo />
-    </div >
+    </div>
   );
 }
 // export function ParallaxScrollDemo() {
@@ -201,16 +278,11 @@ function App() {
 
 export function CardsCarousel({ imageData, onChangePaper }) {
   return (
-    <div className="w-full h-full">
-
-      {/* <Carousel items={cards} /> */}
-    </div>
+    <div className="w-full h-full">{/* <Carousel items={cards} /> */}</div>
   );
 }
 
 export default App;
-
-
 
 export type IconProps = React.HTMLAttributes<SVGElement>;
 
@@ -291,7 +363,6 @@ const DATA = {
 
 export function DockDemo() {
   return (
-
     <TooltipProvider>
       <Dock direction="middle">
         {DATA.navbar.map((item) => (
@@ -302,7 +373,7 @@ export function DockDemo() {
                   href={item.href}
                   className={cn(
                     buttonVariants({ variant: "ghost", size: "icon" }),
-                    "size-12 rounded-full",
+                    "size-12 rounded-full"
                   )}
                 >
                   <item.icon className="size-4" />
@@ -323,7 +394,7 @@ export function DockDemo() {
                   href={social.url}
                   className={cn(
                     buttonVariants({ variant: "ghost", size: "icon" }),
-                    "size-12 rounded-full",
+                    "size-12 rounded-full"
                   )}
                 >
                   <social.icon className="size-4" />
@@ -351,7 +422,6 @@ export function DockDemo() {
   );
 }
 
-
 export function Search() {
   return (
     <div className="bg-background rounded-lg shadow-sm p-4 w-[20%]">
@@ -362,13 +432,17 @@ export function Search() {
           placeholder="Search..."
           className="pl-10 pr-10 rounded-md border border-input bg-transparent py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         />
-        <Button variant="ghost" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute right-2 top-1/2 -translate-y-1/2"
+        >
           <XIcon className="w-5 h-5" />
           <span className="sr-only">Clear</span>
         </Button>
       </div>
     </div>
-  )
+  );
 }
 
 function SearchIcon(props) {
@@ -388,9 +462,8 @@ function SearchIcon(props) {
       <circle cx="11" cy="11" r="8" />
       <path d="m21 21-4.3-4.3" />
     </svg>
-  )
+  );
 }
-
 
 function XIcon(props) {
   return (
@@ -409,5 +482,5 @@ function XIcon(props) {
       <path d="M18 6 6 18" />
       <path d="m6 6 12 12" />
     </svg>
-  )
+  );
 }
