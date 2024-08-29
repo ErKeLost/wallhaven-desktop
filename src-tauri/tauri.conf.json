@@ -6,7 +6,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "Farm-React19-wallhaven",
+    "productName": "wallhaven",
     "version": "0.0.0"
   },
   "tauri": {
@@ -19,7 +19,7 @@
     },
     "windows": [
       {
-        "title": "Farm-React19-wallhaven",
+        "title": "wallhaven",
         "hiddenTitle": true,
         "titleBarStyle": "Overlay",
         "transparent": true,

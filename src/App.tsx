@@ -3,6 +3,7 @@ import { listen } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/tauri";
 import { ModeToggle } from "@/components/mode-toggle";
 import Image from "@/components/ui/image";
+import Waterfall, { waterfallItem } from "@/components/water-fall";
 import { Carousel } from "@/components/ui/cards-carousel";
 import { useDownloadListeners } from "./hooks/use-listen-download";
 import WallpaperPreviewDialog from "@/components/wallpaper-preview-dialog";
@@ -37,8 +38,9 @@ import { Input } from "./components/ui/input";
 import { motion } from "framer-motion";
 import { CardContent, Card } from "./components/ui/card";
 import { Badge } from "./components/ui/badge";
+
 function App() {
-  const [imageData, setImageData] = useState([]);
+  const [imageData, setImageData] = useState(null);
   const [topQuery, setTopQuery] = useState({
     page: 4,
     toprange: "2y",
@@ -120,7 +122,7 @@ function App() {
       </div>
       <main className="px-4 pb-12 grid grid-cols-[60%_40%] h-[45vh]">
         <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-          {imageData.length && (
+          {imageData?.length && (
             <Swiper
               ref={swiperRef}
               modules={[Navigation, Pagination, A11y, Autoplay]}
@@ -200,7 +202,7 @@ function App() {
         {/* </div> */}
       </main>
       <DockDemo />
-      {imageData.length && <WaterFallComp list={imageData} />}
+      {imageData?.length && <WaterFallComp list={imageData} onImageClick={handleImageClick} />}
     </div>
   );
 }
@@ -450,10 +452,9 @@ export function Tags() {
 }
 
 
-import Waterfall, { waterfallItem } from "@/components/water-fall";
 
 
-export function WaterFallComp({ list }) {
+export function WaterFallComp({ list, onImageClick }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   /**测试的列表数据 */
   interface item extends waterfallItem {
@@ -473,8 +474,10 @@ export function WaterFallComp({ list }) {
         marginX={10}
         items={list}
         itemRender={(item, index) => (
-          <div>
-            <img src={item.path} alt={`Item ${index}`} style={{ width: '100%' }} />
+          <div onClick={() => onImageClick(item)}>
+            <Image
+              src={item.path}
+            />
           </div>
         )}
       />

@@ -26,6 +26,12 @@
   display: none; /* Chrome, Safari and Opera */
 }
 
-body {
+#root {
   user-select: none;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+#root::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
 }
