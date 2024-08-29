@@ -12,8 +12,10 @@ export default defineConfig({
       }
     },
     output: {
-      targetEnv: 'browser-esnext'
-    }
+      targetEnv: 'browser-esnext',
+    },
+    progress: false,
+    presetEnv: false,
   },
   server: {
     port: 1420
