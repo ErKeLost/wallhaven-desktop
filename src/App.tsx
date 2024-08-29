@@ -40,7 +40,7 @@ import { Badge } from "./components/ui/badge";
 function App() {
   const [imageData, setImageData] = useState([]);
   const [topQuery, setTopQuery] = useState({
-    page: 3,
+    page: 4,
     toprange: "2y",
   });
 
@@ -107,32 +107,6 @@ function App() {
     }
   }, []);
 
-  const recentWallpapers = [
-    {
-      id: 4,
-      title: "霓虹都市",
-      thumbnail: "/placeholder.svg?height=150&width=250",
-      downloads: 15000,
-    },
-    {
-      id: 5,
-      title: "山川湖泊",
-      thumbnail: "/placeholder.svg?height=150&width=250",
-      downloads: 12000,
-    },
-    {
-      id: 6,
-      title: "极光奇观",
-      thumbnail: "/placeholder.svg?height=150&width=250",
-      downloads: 10000,
-    },
-    {
-      id: 7,
-      title: "海滩日落",
-      thumbnail: "/placeholder.svg?height=150&width=250",
-      downloads: 9000,
-    },
-  ];
   return (
     <div>
       <WallpaperPreviewDialog
@@ -141,17 +115,11 @@ function App() {
         image={selectedImage}
         changePaper={changePaper}
       />
-      {/* <ModeToggle /> */}
       <div className="flex justify-between p-4">
         <Search />
       </div>
-      {/* <Swiper
-        data={imageData}
-        onImageClick={handleImageClick}
-      /> */}
-      {/* <ParallaxScroll images={imageData} /> */}
-      <main className=" px-4 py-12 flex gap-10">
-        <div className="relative rounded-2xl overflow-hidden shadow-2xl w-[60%]">
+      <main className="px-4 pb-12 grid grid-cols-[60%_40%] h-[45vh]">
+        <div className="relative rounded-2xl overflow-hidden shadow-2xl">
           {imageData.length && (
             <Swiper
               ref={swiperRef}
@@ -168,7 +136,7 @@ function App() {
                 delay: 3000,
                 disableOnInteraction: false,
               }}
-              className="h-[45vh]"
+              className="h-full"
             >
               {imageData?.map((wallpaper) => (
                 <SwiperSlide key={wallpaper.id}>
@@ -227,48 +195,12 @@ function App() {
             </Swiper>
           )}
         </div>
-        <div className="w-[40%] flex flex-col">
-          <Card className="bg-gray-800 border-none shadow-xl">
-            <CardContent className="p-6">
-              <div className="text-2xl font-bold text-white mb-4">最近更新</div>
-              <div className="grid grid-cols-2 gap-4">
-                {imageData.slice(0, 4).map((wallpaper) => (
-                  <motion.div
-                    key={wallpaper.id}
-                    className="relative rounded-lg overflow-hidden cursor-pointer group"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                          <img
-                      src={wallpaper.path}
-                      alt={wallpaper.alt}
-                      className="w-full h-full object-cover"
-                    />
-                   </motion.div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-gray-800 border-none shadow-xl">
-            <CardContent className="p-6">
-              <h3 className="text-2xl font-bold text-white mb-4">热门分类</h3>
-              <div className="flex flex-wrap gap-2">
-                {["自然", "动物", "建筑", "艺术", "科技", "抽象"].map(
-                  (category) => (
-                    <Badge
-                      key={category}
-                      className="bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 cursor-pointer transition-colors"
-                    >
-                      {category}
-                    </Badge>
-                  )
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        {/* <div className="flex  justify-between"> */}
+        <Tags />
+        {/* </div> */}
       </main>
       <DockDemo />
+      {imageData.length && <WaterFallComp list={imageData} />}
     </div>
   );
 }
@@ -482,5 +414,70 @@ function XIcon(props) {
       <path d="M18 6 6 18" />
       <path d="m6 6 12 12" />
     </svg>
+  );
+}
+
+
+export function Tags() {
+  return (
+    <div className="p-4 rounded-lg h-full flex items-center overflow-auto">
+      <div className="flex flex-wrap justify-center gap-4 text-[#9ffb9b]">
+        <div className="text-3xl whitespace-nowrap">#fantasy art</div>
+        <div className="text-lg whitespace-nowrap">#pixel art</div>
+        <div className="text-4xl whitespace-nowrap">#Zenless Zone Zero</div>
+        <div className="text-lg whitespace-nowrap">#WLOP</div>
+        <div className="text-3xl whitespace-nowrap">#Naruto (anime)</div>
+        <div className="text-sm whitespace-nowrap">#synthwave</div>
+        <div className="text-lg font-bold whitespace-nowrap">#Wuthering Waves</div>
+        <div className="text-3xl whitespace-nowrap">#Naruto Shippuden</div>
+        <div className="text-lg font-bold whitespace-nowrap">#Black Myth: Wukong</div>
+        <div className="text-lg font-bold whitespace-nowrap">#environment</div>
+        <div className="text-3xl whitespace-nowrap">#Studio Ghibli</div>
+        <div className="text-sm whitespace-nowrap">#Sparkle (Honkai: Star Rail)</div>
+        <div className="text-3xl whitespace-nowrap">#Kafka (Honkai: Star Rail)</div>
+        <div className="text-lg font-bold whitespace-nowrap">#nature</div>
+        <div className="text-lg font-bold whitespace-nowrap">#artwork</div>
+        <div className="text-3xl whitespace-nowrap">#Cyberpunk 2077</div>
+        <div className="text-3xl whitespace-nowrap">#abstract</div>
+        <div className="text-sm whitespace-nowrap">#dark</div>
+        <div className="text-lg font-bold whitespace-nowrap">#futuristic</div>
+        <div className="text-sm whitespace-nowrap">#Berserk</div>
+        <div className="text-lg font-bold whitespace-nowrap">#black background</div>
+        <div className="text-sm whitespace-nowrap">#One Piece</div>
+      </div>
+    </div>
+  )
+}
+
+
+import Waterfall, { waterfallItem } from "@/components/water-fall";
+
+
+export function WaterFallComp({ list }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  /**测试的列表数据 */
+  interface item extends waterfallItem {
+    /**图片路径 */
+    src: string;
+    /**图片描述 */
+    text: string;
+  }
+  const getList = () => {
+    return new Promise<item[]>((resolve) => setTimeout(() => resolve(list), 1000));
+  };
+  return (
+    <main style={{ width: "100%" }} ref={scrollRef}>
+      <Waterfall
+        scrollRef={scrollRef}
+        cols={5}
+        marginX={10}
+        items={list}
+        itemRender={(item, index) => (
+          <div>
+            <img src={item.path} alt={`Item ${index}`} style={{ width: '100%' }} />
+          </div>
+        )}
+      />
+    </main>
   );
 }
