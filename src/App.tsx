@@ -420,7 +420,7 @@ function XIcon(props) {
 
 export function Tags() {
   return (
-    <div className="p-4 rounded-lg h-full flex items-center overflow-auto">
+    <div className="p-4 rounded-lg h-full flex items-center overflow-auto scrollbar-hide">
       <div className="flex flex-wrap justify-center gap-4 text-[#9ffb9b]">
         <div className="text-3xl whitespace-nowrap">#fantasy art</div>
         <div className="text-lg whitespace-nowrap">#pixel art</div>
