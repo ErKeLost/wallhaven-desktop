@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "wallhaven",
-    "version": "../../package.json"
+    "version": "0.0.1"
   },
   "tauri": {
     "allowlist": {
