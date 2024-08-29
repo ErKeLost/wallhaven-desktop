@@ -7,10 +7,34 @@
   },
   "package": {
     "productName": "wallhaven",
-    "version": "0.0.0"
+    "version": "../../package.json"
   },
   "tauri": {
     "allowlist": {
+      "os": {
+				"all": true
+			},
+			"globalShortcut": {
+				"all": true
+			},
+			"path": {
+				"all": true
+			},
+			"fs": {
+				"all": true,
+				"scope": ["**/*"]
+			},
+			"protocol": {
+				"asset": true,
+				"assetScope": ["**/*"]
+			},
+			"process": {
+				"relaunch": true
+			},
+			"dialog": {
+				"ask": true,
+				"open": true
+			},  
       "all": false,
       "shell": {
         "all": false,
@@ -41,6 +65,14 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ]
-    }
+    },
+    "updater": {
+			"active": true,
+			"endpoints": [
+				"https://mirror.ghproxy.com/https://github.com/ayangweb/EcoPaste/releases/latest/download/latest.json"
+			],
+			"dialog": false,
+			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDNBRjgxOTE4RjlDMzRDNUQKUldSZFRNUDVHQm40T3BzT1FhZWxEMkEvbHBiSFJNLzVleS9HRVIyM0dzN0JXRmZRZktoS2w0U1MK"
+		}
   }
 }

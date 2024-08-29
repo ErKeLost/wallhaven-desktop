@@ -11,6 +11,7 @@ export default defineConfig({
         "@": path.resolve(__dirname, "src"),
       }
     },
+    persistentCache: false,
     output: {
       targetEnv: 'browser-esnext'
     }
