@@ -30,6 +30,7 @@
     "lucide-react": "^0.435.0",
     "postcss": "^8.4.41",
     "react": "19.0.0-rc-b57d2823-20240822",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "19.0.0-rc-b57d2823-20240822",
     "react-motion": "^0.5.2",
     "react-responsive": "^10.0.0",
