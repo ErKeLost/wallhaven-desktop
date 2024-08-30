@@ -43,7 +43,7 @@ import { Badge } from "./components/ui/badge";
 function App() {
   const [imageData, setImageData] = useState(null);
   const [topQuery, setTopQuery] = useState({
-    page: 3,
+    page: 1,
     toprange: "2y",
   });
 
@@ -121,7 +121,7 @@ function App() {
       <div className="flex justify-between p-4">
         <Search />
       </div>
-      <main className="px-4 pb-12 grid grid-cols-1 lg:grid-cols-[60%_40%] h-auto md:h-[60vh] ">
+      <main className="px-4 pb-12 grid grid-cols-1 lg:grid-cols-[60%_40%] h-auto md:h-[65vh] ">
         <div className="relative rounded-2xl overflow-hidden shadow-2xl mb-4 md:mb-0">
           {imageData?.length && (
             <Swiper

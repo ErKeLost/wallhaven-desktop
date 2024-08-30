@@ -48,7 +48,7 @@ export default function WallpaperPreviewDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[95vw] h-[95vh] sm:w-[90vw] sm:h-[90vh] md:w-[80vw] md:h-[80vh] lg:w-[70vw] lg:h-[70vh] xl:w-[60vw] xl:h-[60vh] max-w-[1200px] max-h-[800px] flex flex-col">
+      <DialogContent className="w-[95vw] h-[95vh] sm:w-[90vw] sm:h-[90vh] md:w-[80vw] md:h-[80vh] lg:w-[70vw] lg:h-[70vh] xl:w-[70vw] xl:h-[70vh] max-w-[1200px] max-h-[800px] flex flex-col">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle>壁纸预览</DialogTitle>
           <DialogDescription>高清壁纸 - ID：{image.id}</DialogDescription>
