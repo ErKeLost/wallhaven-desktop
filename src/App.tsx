@@ -3,6 +3,7 @@ import { listen } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/tauri";
 import { ModeToggle } from "@/components/mode-toggle";
 import Image from "@/components/ui/image";
+import { useMediaQuery } from 'react-responsive';
 import Waterfall, { waterfallItem } from "@/components/water-fall";
 import { Carousel } from "@/components/ui/cards-carousel";
 import { useDownloadListeners } from "./hooks/use-listen-download";
@@ -42,7 +43,7 @@ import { Badge } from "./components/ui/badge";
 function App() {
   const [imageData, setImageData] = useState(null);
   const [topQuery, setTopQuery] = useState({
-    page: 4,
+    page: 3,
     toprange: "2y",
   });
 
@@ -120,8 +121,8 @@ function App() {
       <div className="flex justify-between p-4">
         <Search />
       </div>
-      <main className="px-4 pb-12 grid grid-cols-[60%_40%] h-[45vh]">
-        <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+      <main className="px-4 pb-12 grid grid-cols-1 lg:grid-cols-[60%_40%] h-auto md:h-[60vh] ">
+        <div className="relative rounded-2xl overflow-hidden shadow-2xl mb-4 md:mb-0">
           {imageData?.length && (
             <Swiper
               ref={swiperRef}
@@ -151,22 +152,21 @@ function App() {
                       alt={wallpaper.alt}
                       className="w-full h-full object-cover"
                     />
-                    {/* <Image src={wallpaper.path} alt={wallpaper.alt} /> */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-8">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4 md:p-8">
                       <div className="w-full">
-                        <h2 className="text-5xl font-bold mb-4 tracking-tight">
+                        <h2 className="text-3xl md:text-5xl font-bold mb-2 md:mb-4 tracking-tight">
                           {wallpaper.title}
                         </h2>
-                        <p className="text-xl text-gray-300 mb-6 max-w-2xl">
+                        <p className="text-base md:text-xl text-gray-300 mb-3 md:mb-6 max-w-2xl">
                           探索每日精心挑选的壁纸，让您的屏幕焕发艺术光彩。
                         </p>
-                        <div className="flex space-x-4">
-                          <Button className="bg-white text-black hover:bg-gray-200 transition-colors">
+                        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                          <Button className="bg-white text-black hover:bg-gray-200 transition-colors w-full sm:w-auto">
                             立即下载
                           </Button>
                           <Button
                             variant="outline"
-                            className="text-white border-white hover:bg-white/20 transition-colors"
+                            className="text-white border-white hover:bg-white/20 transition-colors w-full sm:w-auto"
                           >
                             查看详情
                           </Button>
@@ -176,30 +176,28 @@ function App() {
                   </div>
                 </SwiperSlide>
               ))}
-              <div className="swiper-button-prev absolute left-4 top-1/2 z-10 transform -translate-y-1/2">
+              <div className="swiper-button-prev absolute left-2 md:left-4 top-1/2 z-10 transform -translate-y-1/2">
                 <Button
                   size="icon"
                   variant="ghost"
                   className="text-white hover:text-purple-400 transition-colors"
                 >
-                  <ChevronLeft className="h-8 w-8" />
+                  <ChevronLeft className="h-6 w-6 md:h-8 md:w-8" />
                 </Button>
               </div>
-              <div className="swiper-button-next absolute right-4 top-1/2 z-10 transform -translate-y-1/2">
+              <div className="swiper-button-next absolute right-2 md:right-4 top-1/2 z-10 transform -translate-y-1/2">
                 <Button
                   size="icon"
                   variant="ghost"
                   className="text-white hover:text-purple-400 transition-colors"
                 >
-                  <ChevronRight className="h-8 w-8" />
+                  <ChevronRight className="h-6 w-6 md:h-8 md:w-8" />
                 </Button>
               </div>
             </Swiper>
           )}
         </div>
-        {/* <div className="flex  justify-between"> */}
         <Tags />
-        {/* </div> */}
       </main>
       <DockDemo />
       {imageData?.length && <WaterFallComp list={imageData} onImageClick={handleImageClick} />}
@@ -463,14 +461,26 @@ export function WaterFallComp({ list, onImageClick }) {
     /**图片描述 */
     text: string;
   }
-  const getList = () => {
-    return new Promise<item[]>((resolve) => setTimeout(() => resolve(list), 1000));
+
+  const isExtraLargeScreen = useMediaQuery({ minWidth: 2560 });
+  const isLargeScreen = useMediaQuery({ minWidth: 1920, maxWidth: 2559 });
+  const isMediumScreen = useMediaQuery({ minWidth: 1280, maxWidth: 1919 });
+  const isSmallScreen = useMediaQuery({ minWidth: 768, maxWidth: 1279 });
+  const isExtraSmallScreen = useMediaQuery({ maxWidth: 767 });
+
+  const getCols = () => {
+    if (isExtraLargeScreen) return 5;    // 2560px 及以上
+    if (isLargeScreen) return 4;         // 1920px - 2559px
+    if (isMediumScreen) return 3;        // 1280px - 1919px
+    if (isSmallScreen) return 2;         // 768px - 1279px
+    if (isExtraSmallScreen) return 1;    // 767px 及以下
+    return 5; // 默认值
   };
   return (
     <main style={{ width: "100%" }} ref={scrollRef}>
       <Waterfall
         scrollRef={scrollRef}
-        cols={5}
+        cols={getCols()}
         marginX={10}
         items={list}
         itemRender={(item, index) => (

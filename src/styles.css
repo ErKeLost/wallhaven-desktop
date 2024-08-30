@@ -35,3 +35,16 @@
 #root::-webkit-scrollbar {
   display: none; /* Chrome, Safari and Opera */
 }
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--theme-scrollbar-track, --background); /* 使用CSS变量 */
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--theme-scrollbar-thumb, #ffffff);
+  border-radius: 8px;
+}

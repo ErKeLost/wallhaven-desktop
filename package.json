@@ -32,6 +32,7 @@
     "react": "19.0.0-rc-b57d2823-20240822",
     "react-dom": "19.0.0-rc-b57d2823-20240822",
     "react-motion": "^0.5.2",
+    "react-responsive": "^10.0.0",
     "react-spring": "^9.7.4",
     "styled-components": "^6.1.12",
     "swiper": "^10.0.0",
