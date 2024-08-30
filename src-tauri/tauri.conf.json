@@ -7,10 +7,34 @@
   },
   "package": {
     "productName": "wallhaven",
-    "version": "0.0.0"
+    "version": "0.0.1"
   },
   "tauri": {
     "allowlist": {
+      "os": {
+				"all": true
+			},
+			"globalShortcut": {
+				"all": true
+			},
+			"path": {
+				"all": true
+			},
+			"fs": {
+				"all": true,
+				"scope": ["**/*"]
+			},
+			"protocol": {
+				"asset": true,
+				"assetScope": ["**/*"]
+			},
+			"process": {
+				"relaunch": true
+			},
+			"dialog": {
+				"ask": true,
+				"open": true
+			},  
       "all": false,
       "shell": {
         "all": false,
@@ -41,6 +65,9 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ]
+    },
+    "updater": {
+      "active": false
     }
   }
 }
