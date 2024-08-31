@@ -36,15 +36,16 @@ import "swiper/css";
 import "swiper/css/effect-cards";
 import { A11y, Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Input } from "./components/ui/input";
-import { motion } from "framer-motion";
+import { motion, progress } from "framer-motion";
 import { CardContent, Card } from "./components/ui/card";
 import { Badge } from "./components/ui/badge";
 
 function App() {
+  const [progress, setProgress] = useState(0);
   const [imageData, setImageData] = useState(null);
   const [topQuery, setTopQuery] = useState({
     page: 1,
-    toprange: "2y",
+    toprange: "3M",
   });
 
   const query = useCallback(async () => {
@@ -110,9 +111,36 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    const unlisten1 = listen('download_start', () => {
+      // setStatus('下载开始');
+      console.log('download_start');
+
+    });
+
+    const unlisten2 = listen('download_progress', (event: { payload: number }) => {
+      // setProgress(event.payload);
+      console.log('download_progress', event.payload);
+      setProgress(event.payload);
+    });
+
+    const unlisten3 = listen('download_complete', () => {
+      // setStatus('下载完成');
+      console.log('download_complete');
+    });
+
+    return () => {
+      unlisten1.then(f => f());
+      unlisten2.then(f => f());
+      unlisten3.then(f => f());
+    };
+  }, []);
+
+
   return (
     <div>
       <WallpaperPreviewDialog
+        progress={progress}
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         image={selectedImage}
@@ -476,21 +504,45 @@ export function WaterFallComp({ list, onImageClick }) {
     if (isExtraSmallScreen) return 1;    // 767px 及以下
     return 5; // 默认值
   };
+
+  const [currentList, setCurrentList] = useState(list);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  function fetchMoreData() {
+
+  }
+
+  const loadMore = useCallback(async () => {
+    if (loading) return;
+    setLoading(true);
+    try {
+      // 这里应该是您的API调用，获取更多数据
+      const newData = await fetchMoreData(page + 1);
+      setCurrentList(prevList => [...prevList, ...newData]);
+      setPage(prevPage => prevPage + 1);
+    } catch (error) {
+      console.error("加载更多数据时出错:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, loading]);
+
   return (
-    <main style={{ width: "100%" }} ref={scrollRef}>
+    <main className="w-full" ref={scrollRef}>
       <Waterfall
         scrollRef={scrollRef}
         cols={getCols()}
         marginX={10}
-        items={list}
+        items={currentList}
         itemRender={(item, index) => (
           <div onClick={() => onImageClick(item)}>
-            <Image
-              src={item.path}
-            />
+            <Image src={item.path} />
           </div>
         )}
+        onLoadMore={loadMore}
       />
+      {loading && <div>加载中...</div>}
     </main>
   );
 }
