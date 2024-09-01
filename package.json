@@ -32,6 +32,7 @@
     "react": "19.0.0-rc-b57d2823-20240822",
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "19.0.0-rc-b57d2823-20240822",
+    "react-draggable": "^4.4.6",
     "react-motion": "^0.5.2",
     "react-responsive": "^10.0.0",
     "react-spring": "^9.7.4",

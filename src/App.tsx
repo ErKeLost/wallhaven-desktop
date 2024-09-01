@@ -4,11 +4,13 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { ModeToggle } from "@/components/mode-toggle";
 import Image from "@/components/ui/image";
 import { useMediaQuery } from 'react-responsive';
-import Waterfall, { waterfallItem } from "@/components/water-fall";
-import { Carousel } from "@/components/ui/cards-carousel";
+import Waterfall, { WaterfallItem } from "@/components/water-fall";
+// import { Carousel } from "@/components/ui/cards-carousel";
+import Draggable from 'react-draggable';
+
 import { useDownloadListeners } from "./hooks/use-listen-download";
 import WallpaperPreviewDialog from "@/components/wallpaper-preview-dialog";
-import Swiper from "@/components/swiper";
+// import Swiper from "@/components/swiper";
 import {
   Tooltip,
   TooltipContent,
@@ -28,12 +30,12 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Dock, DockIcon } from "@/components/ui/dock";
 import { cn } from "./lib/utils";
-import { ParallaxScroll } from "./components/ui/parallax-scroll";
+// import { ParallaxScroll } from "./components/ui/parallax-scroll";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 // Import Swiper styles
 import "swiper/css";
-import "swiper/css/effect-cards";
+// import "swiper/css/effect-cards";
 import { A11y, Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Input } from "./components/ui/input";
 import { motion, progress } from "framer-motion";
@@ -149,7 +151,7 @@ function App() {
       <div className="flex justify-between p-4">
         <Search />
       </div>
-      <main className="px-4 pb-12 grid grid-cols-1 lg:grid-cols-[60%_40%] h-auto md:h-[65vh] ">
+      <main className="px-4 pb-12 grid grid-cols-1 lg:grid-cols-[60%_40%] h-auto md:h-[65vh] relative">
         <div className="relative rounded-2xl overflow-hidden shadow-2xl mb-4 md:mb-0">
           {imageData?.length && (
             <Swiper
@@ -227,8 +229,10 @@ function App() {
         </div>
         <Tags />
       </main>
-      <DockDemo />
-      {imageData?.length && <WaterFallComp list={imageData} onImageClick={handleImageClick} />}
+      <div className="absolute z-10">
+        <DockActionBar />
+      </div>
+      <WaterFallComp onImageClick={handleImageClick} />
     </div>
   );
 }
@@ -321,64 +325,69 @@ const DATA = {
   },
 };
 
-export function DockDemo() {
+export function DockActionBar() {
+  const nodeRef = useRef(null);
   return (
-    <TooltipProvider>
-      <Dock direction="middle">
-        {DATA.navbar.map((item) => (
-          <DockIcon key={item.label}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <a
-                  href={item.href}
-                  className={cn(
-                    buttonVariants({ variant: "ghost", size: "icon" }),
-                    "size-12 rounded-full"
-                  )}
-                >
-                  <item.icon className="size-4" />
-                </a>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{item.label}</p>
-              </TooltipContent>
-            </Tooltip>
-          </DockIcon>
-        ))}
-        <div orientation="vertical" className="h-full" />
-        {Object.entries(DATA.contact.social).map(([name, social]) => (
-          <DockIcon key={name}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <a
-                  href={social.url}
-                  className={cn(
-                    buttonVariants({ variant: "ghost", size: "icon" }),
-                    "size-12 rounded-full"
-                  )}
-                >
-                  <social.icon className="size-4" />
-                </a>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{name}</p>
-              </TooltipContent>
-            </Tooltip>
-          </DockIcon>
-        ))}
-        <div orientation="vertical" className="h-full py-2" />
-        <DockIcon>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <ModeToggle className="rounded-full" />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Theme</p>
-            </TooltipContent>
-          </Tooltip>
-        </DockIcon>
-      </Dock>
-    </TooltipProvider>
+    <Draggable nodeRef={nodeRef}>
+      <div ref={nodeRef} className="cursor-move" >
+        <TooltipProvider>
+          <Dock direction="middle">
+            {DATA.navbar.map((item) => (
+              <DockIcon key={item.label}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a
+                      href={item.href}
+                      className={cn(
+                        buttonVariants({ variant: "ghost", size: "icon" }),
+                        "size-12 rounded-full"
+                      )}
+                    >
+                      <item.icon className="size-4" />
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{item.label}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </DockIcon>
+            ))}
+            <div orientation="vertical" className="h-full" />
+            {Object.entries(DATA.contact.social).map(([name, social]) => (
+              <DockIcon key={name}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a
+                      href={social.url}
+                      className={cn(
+                        buttonVariants({ variant: "ghost", size: "icon" }),
+                        "size-12 rounded-full"
+                      )}
+                    >
+                      <social.icon className="size-4" />
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{name}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </DockIcon>
+            ))}
+            <div orientation="vertical" className="h-full py-2" />
+            <DockIcon>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <ModeToggle className="rounded-full" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Theme</p>
+                </TooltipContent>
+              </Tooltip>
+            </DockIcon>
+          </Dock>
+        </TooltipProvider>
+      </div>
+    </Draggable>
   );
 }
 
@@ -480,10 +489,10 @@ export function Tags() {
 
 
 
-export function WaterFallComp({ list, onImageClick }) {
+export function WaterFallComp({ onImageClick }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   /**测试的列表数据 */
-  interface item extends waterfallItem {
+  interface item extends WaterfallItem {
     /**图片路径 */
     src: string;
     /**图片描述 */
@@ -505,28 +514,49 @@ export function WaterFallComp({ list, onImageClick }) {
     return 5; // 默认值
   };
 
-  const [currentList, setCurrentList] = useState(list);
+  // loading data
+  const [imageData, setImageData] = useState([]);
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [toprange, setToprange] = useState('1M'); // 假设默认值为 '1M'
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  function fetchMoreData() {
-
-  }
-
-  const loadMore = useCallback(async () => {
-    if (loading) return;
-    setLoading(true);
+  const fetchData = useCallback(async (currentPage) => {
+    if (isLoading) return; // 如果正在加载，直接返回
+    setIsLoading(true);
+    setError(null);
     try {
-      // 这里应该是您的API调用，获取更多数据
-      const newData = await fetchMoreData(page + 1);
-      setCurrentList(prevList => [...prevList, ...newData]);
-      setPage(prevPage => prevPage + 1);
-    } catch (error) {
-      console.error("加载更多数据时出错:", error);
+      const res = await fetch(
+        `https://heaven-walls-api.vercel.app/api/wallhaven/topwalls?page=${currentPage}&toprange=${toprange}`
+      );
+      const data = await res.json();
+      return data.data;
+    } catch (err) {
+      setError(err.message);
+      return [];
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
-  }, [page, loading]);
+  }, [toprange]);
+
+
+  const loadInitialData = useCallback(async () => {
+    const initialData = await fetchData(1);
+    setImageData(initialData);
+    setPage(1);
+  }, [fetchData]);
+
+  const onLoadMore = useCallback(async () => {
+    if (isLoading) return;
+    const nextPage = page + 1;
+    const newData = await fetchData(nextPage);
+    setImageData(prevData => [...prevData, ...newData]);
+    setPage(nextPage);
+  }, [fetchData, page, isLoading]);
+
+  useEffect(() => {
+    loadInitialData();
+  }, [loadInitialData]);
 
   return (
     <main className="w-full" ref={scrollRef}>
@@ -534,15 +564,15 @@ export function WaterFallComp({ list, onImageClick }) {
         scrollRef={scrollRef}
         cols={getCols()}
         marginX={10}
-        items={currentList}
+        items={imageData}
         itemRender={(item, index) => (
           <div onClick={() => onImageClick(item)}>
             <Image src={item.path} />
           </div>
         )}
-        onLoadMore={loadMore}
+        onLoadMore={onLoadMore}
       />
-      {loading && <div>加载中...</div>}
+      {isLoading && <div>加载中...</div>}
     </main>
   );
 }

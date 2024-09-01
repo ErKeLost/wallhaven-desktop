@@ -74,21 +74,26 @@ export default function Waterfall<T extends WaterfallItem>(props: WaterfallProps
   }, [colList]);
 
   // 添加滚动监听
+  const handleScroll = useCallback(() => {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = window.innerHeight || document.documentElement.clientHeight;
+
+    // 当滚动到距离底部100px时触发加载
+    if (scrollHeight - scrollTop - clientHeight < 100) {
+      console.log("滚动到底部，加载更多");
+      onLoadMore?.();
+    }
+  }, [onLoadMore]);
+
   useEffect(() => {
-    const scrollElement = scrollRef.current;
-    if (!scrollElement || !onLoadMore) return;
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
 
-    const handleScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = scrollElement;
-      if (scrollHeight - scrollTop - clientHeight < 100) {
-        onLoadMore();
-      }
-    };
-
-    scrollElement.addEventListener('scroll', handleScroll);
-    return () => scrollElement.removeEventListener('scroll', handleScroll);
-  }, [scrollRef, onLoadMore]);
-
+  // window.addEventListener('scroll', () => {
+  // console.log("开始滚动");
+  // })
   return (
     <div
       ref={listRef}
