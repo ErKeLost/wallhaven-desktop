@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import InteractiveResolutionPicker from "./InteractiveResolutionPicker";
+import InteractiveResolutionPicker from "./interactiveResolutionPicker";
 
 export default function WallpaperPreviewDialog({
   isOpen,
