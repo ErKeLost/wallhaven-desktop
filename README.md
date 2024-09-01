@@ -12,6 +12,8 @@ Create top desktop wallpaper software based on wallhaven api
 
 Farm + React19 + Tauri + Shadcn/UI
 
+![image](https://github.com/user-attachments/assets/29788093-038c-42a5-b2e9-3369c9ef5d39)
+
 ![image](https://github.com/user-attachments/assets/a23e9d38-1f1b-4c54-818c-a1c566e35462)
 
 <img width="2356" alt="image" src="https://github.com/user-attachments/assets/63fb9efb-5f79-41b6-9afc-37d36528da10">
