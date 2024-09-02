@@ -22,6 +22,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Download,
+  Loader,
   HomeIcon,
   MailIcon,
   PencilIcon,
@@ -151,7 +152,7 @@ function App() {
       <div className="flex justify-between p-4">
         <Search />
       </div>
-      <main className="px-4 pb-12 grid grid-cols-1 lg:grid-cols-[60%_40%] h-auto md:h-[65vh] relative">
+      <main className="px-4 pb-12 grid grid-cols-1 lg:grid-cols-[60%_40%] h-auto md:h-[65vh]">
         <div className="relative rounded-2xl overflow-hidden shadow-2xl mb-4 md:mb-0">
           {imageData?.length && (
             <Swiper
@@ -229,7 +230,7 @@ function App() {
         </div>
         <Tags />
       </main>
-      <div className="absolute z-10">
+      <div className="z-10">
         <DockActionBar />
       </div>
       <WaterFallComp onImageClick={handleImageClick} />
@@ -328,8 +329,8 @@ const DATA = {
 export function DockActionBar() {
   const nodeRef = useRef(null);
   return (
-    <Draggable nodeRef={nodeRef}>
-      <div ref={nodeRef} className="cursor-move" >
+    <Draggable nodeRef={nodeRef} defaultPosition={{ x: 0, y: 0 }}>
+      <div ref={nodeRef} className="cursor-move !fixed z-10 inset-x-0 bottom-16 flex justify-center">
         <TooltipProvider>
           <Dock direction="middle">
             {DATA.navbar.map((item) => (
@@ -387,7 +388,7 @@ export function DockActionBar() {
           </Dock>
         </TooltipProvider>
       </div>
-    </Draggable>
+    </Draggable >
   );
 }
 
@@ -566,13 +567,19 @@ export function WaterFallComp({ onImageClick }) {
         marginX={10}
         items={imageData}
         itemRender={(item, index) => (
-          <div onClick={() => onImageClick(item)}>
-            <Image src={item.path} />
-          </div>
+          <Card onClick={() => onImageClick(item)}>
+            <Image src={item.thumbs.large} className="w-full" />
+          </Card>
         )}
         onLoadMore={onLoadMore}
       />
-      {isLoading && <div>加载中...</div>}
+      {isLoading && (
+        <div className="flex justify-center items-center py-8">
+          <div className="animate-spin">
+            <Loader />
+          </div>
+        </div>
+      )}
     </main>
   );
 }
