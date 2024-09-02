@@ -567,7 +567,7 @@ export function WaterFallComp({ onImageClick }) {
         marginX={10}
         items={imageData}
         itemRender={(item, index) => (
-          <Card onClick={() => onImageClick(item)}>
+          <Card onClick={() => onImageClick(item)} className="my-2  rounded-xl overflow-hidden">
             <Image src={item.thumbs.large} className="w-full" />
           </Card>
         )}
