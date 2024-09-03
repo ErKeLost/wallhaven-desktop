@@ -649,14 +649,14 @@ export function SidebarDesktop({ children }) {
           <div>
             <SidebarLink
               link={{
-                label: "Manu Arora",
+                label: "Erkelost Adny",
                 href: "#",
                 icon: (
                   <Image
-                    src="https://assets.aceternity.com/manu.png"
+                    src="https://avatars.githubusercontent.com/u/66500121?v=4"
                     className="h-7 w-7 flex-shrink-0 rounded-full"
-                    width={50}
-                    height={50}
+                    width={30}
+                    height={30}
                     alt="Avatar"
                   />
                 ),
