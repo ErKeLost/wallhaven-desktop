@@ -143,7 +143,7 @@ function App() {
   return (
     <div>
       <SidebarDesktop>
-        <div className="flex justify-between p-4">
+        <div className="flex w-full justify-between p-4">
           <Search />
         </div>
         <div className="z-10">
@@ -398,7 +398,7 @@ export function DockActionBar() {
 
 export function Search() {
   return (
-    <div className="bg-background rounded-lg shadow-sm p-4 w-[20%]">
+    <div className="rounded-lg shadow-sm p-4 w-[20%]">
       <div className="relative">
         <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
         <Input
@@ -512,8 +512,8 @@ export function WaterFallComp({ onImageClick }) {
 
   const getCols = () => {
     if (isExtraLargeScreen) return 5;    // 2560px 及以上
-    if (isLargeScreen) return 4;         // 1920px - 2559px
-    if (isMediumScreen) return 3;        // 1280px - 1919px
+    if (isLargeScreen) return 5;         // 1920px - 2559px
+    if (isMediumScreen) return 4;        // 1280px - 1919px
     if (isSmallScreen) return 2;         // 768px - 1279px
     if (isExtraSmallScreen) return 1;    // 767px 及以下
     return 5; // 默认值
@@ -564,7 +564,7 @@ export function WaterFallComp({ onImageClick }) {
   }, [loadInitialData]);
 
   return (
-    <main className="w-full h-full overflow-auto" ref={scrollRef}>
+    <main className="w-full overflow-y-auto" ref={scrollRef}>
       <Waterfall
         scrollRef={scrollRef}
         cols={getCols()}
@@ -632,7 +632,7 @@ export function SidebarDesktop({ children }) {
   return (
     <div
       className={cn(
-        "rounded-md flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full flex-1 border border-neutral-200 dark:border-neutral-700 overflow-hidden",
+        "rounded-md flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full flex-1 border border-neutral-200 dark:border-neutral-700 overflow-x-hidden",
         "h-screen" // for your use case, use `h-screen` instead of `h-[60vh]`
       )}
     >
@@ -666,7 +666,7 @@ export function SidebarDesktop({ children }) {
         </SidebarBody>
       </Sidebar>
       {/* <Dashboard /> */}
-      <div className="flex-1">
+      <div className="flex-1 overflow-x-hidden overflow-y-auto">
         {children}
       </div>
     </div>

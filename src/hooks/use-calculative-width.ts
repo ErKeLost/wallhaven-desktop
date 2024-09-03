@@ -8,24 +8,23 @@ const useCalculativeWidth = (
   const [itemWidth, setItemWidth] = useState(0);
 
   useEffect(() => {
+    if (!containerRef.current) return;
+
     const calculateWidth = () => {
-      if (containerRef.current) {
-        const containerWidth = containerRef.current.offsetWidth;
-        const totalMargin = marginX * (cols - 1);
-        const availableWidth = containerWidth - totalMargin;
-        const calculatedWidth = availableWidth / cols;
-        setItemWidth(Math.floor(calculatedWidth));
-      }
+      const containerWidth = containerRef.current!.offsetWidth;
+      const totalMargin = marginX * (cols - 1);
+      const availableWidth = containerWidth - totalMargin;
+      const calculatedWidth = availableWidth / cols;
+      setItemWidth(Math.floor(calculatedWidth));
     };
 
-    calculateWidth();
+    const resizeObserver = new ResizeObserver(calculateWidth);
+    resizeObserver.observe(containerRef.current);
 
-    // 添加窗口大小变化的监听器
-    window.addEventListener('resize', calculateWidth);
-
-    // 清理函数
     return () => {
-      window.removeEventListener('resize', calculateWidth);
+      if (containerRef.current) {
+        resizeObserver.unobserve(containerRef.current);
+      }
     };
   }, [containerRef, marginX, cols]);
 

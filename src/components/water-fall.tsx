@@ -24,7 +24,10 @@ export default function Waterfall<T extends WaterfallItem>(props: WaterfallProps
   const colRef = useRef<(HTMLDivElement | null)[]>([]); // 每列的ref数组
 
   // 计算每个项目的宽度
+  console.log(listRef);
+
   const imgWidth = useCalculativeWidth(listRef, marginX, cols);
+  console.log(imgWidth);
 
   // 存储分配到每列的项目
   const [colList, setColList] = useState<T[][]>([]);
@@ -75,21 +78,24 @@ export default function Waterfall<T extends WaterfallItem>(props: WaterfallProps
 
   // 添加滚动监听
   const handleScroll = useCallback(() => {
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const scrollHeight = document.documentElement.scrollHeight;
-    const clientHeight = window.innerHeight || document.documentElement.clientHeight;
+    if (!scrollRef.current) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
 
     // 当滚动到距离底部100px时触发加载
     if (scrollHeight - scrollTop - clientHeight < 100) {
-      console.log("滚动到底部，加载更多");
+      console.log("滚动到容器底部，加载更多");
       onLoadMore?.();
     }
-  }, [onLoadMore]);
+  }, [onLoadMore, scrollRef]);
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [handleScroll]);
+    const scrollContainer = scrollRef.current;
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', handleScroll);
+      return () => scrollContainer.removeEventListener('scroll', handleScroll);
+    }
+  }, [handleScroll, scrollRef]);
 
   // window.addEventListener('scroll', () => {
   // console.log("开始滚动");
@@ -101,7 +107,7 @@ export default function Waterfall<T extends WaterfallItem>(props: WaterfallProps
         display: "flex",
         gap: `${marginX}px`,
         justifyContent: "center",
-        width: '100%'
+        // width: '100%'
       }}
     >
       {colList.map((column, colIndex) => (
