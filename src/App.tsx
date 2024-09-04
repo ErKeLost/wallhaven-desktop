@@ -139,18 +139,21 @@ function App() {
     };
   }, []);
 
+  const scrollRef = useRef(null);
 
   return (
     <div>
       <SidebarDesktop>
-        <div className="flex w-full justify-between p-4">
-          <Search />
-        </div>
-        <div className="z-10">
-          <DockActionBar />
-        </div>
-        <WaterFallComp onImageClick={handleImageClick} />
-      </SidebarDesktop>
+        <div className="flex-1 overflow-x-hidden" ref={scrollRef}>
+          <div className="flex w-full justify-between p-4">
+            <Search />
+          </div>
+          <div className="z-10">
+            <DockActionBar />
+          </div>
+          <WaterFallComp onImageClick={handleImageClick} scrollRef={scrollRef} />
+        </div >
+      </SidebarDesktop >
       <WallpaperPreviewDialog
         progress={progress}
         isOpen={isDialogOpen}
@@ -238,7 +241,7 @@ function App() {
         <Tags />
       </main> */}
 
-    </div>
+    </div >
   );
 }
 // export function ParallaxScrollDemo() {
@@ -491,11 +494,8 @@ export function Tags() {
   )
 }
 
-
-
-
-export function WaterFallComp({ onImageClick }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
+export function WaterFallComp({ onImageClick, scrollRef }) {
+  // const scrollRef = useRef<HTMLDivElement>(null);
   /**测试的列表数据 */
   interface item extends WaterfallItem {
     /**图片路径 */
@@ -665,10 +665,9 @@ export function SidebarDesktop({ children }) {
           </div>
         </SidebarBody>
       </Sidebar>
-      {/* <Dashboard /> */}
-      <div className="flex-1 overflow-x-hidden overflow-y-auto">
-        {children}
-      </div>
+
+      {children}
+      {/* </div> */}
     </div>
   );
 }
