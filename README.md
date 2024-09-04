@@ -4,9 +4,7 @@ Create top desktop wallpaper software based on wallhaven api
 
 ## cross-compilation and distribution
 
-[windows](https://github.com/ErKeLost/wallhaven-desktop/releases/download/untagged-5571e07035dc41f76dc2/wallhaven_0.0.1_x64-setup.exe)
-
-[macos](https://github.com/ErKeLost/wallhaven-desktop/releases/download/untagged-5571e07035dc41f76dc2/wallhaven_0.0.1_aarch64.dmg)
+[download](https://github.com/ErKeLost/wallhaven-desktop/releases/tag/app-v0.0.1)
 
 ## Tel Stack
 
