@@ -58,7 +58,6 @@ export default function Waterfall<T extends WaterfallItem>(props: WaterfallProps
     setColList(newColList);
     setColHeight(newColHeight);
   }, [cols, imgWidth]);
-  // 当项目数组或imgWidth变化时，重新分配项目
   useEffect(() => {
     if (items?.length > 0 && imgWidth > 0) {
       distributeItems(items);
