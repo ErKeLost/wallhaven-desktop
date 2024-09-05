@@ -139,7 +139,7 @@ function App() {
           <div className="z-10">
             <DockActionBar />
           </div>
-          <WaterFallComp onImageClick={handleImageClick} scrollRef={scrollRef} />
+          {/* <WaterFallComp onImageClick={handleImageClick} scrollRef={scrollRef} /> */}
         </div >
       </SidebarDesktop >
       <WallpaperPreviewDialog
