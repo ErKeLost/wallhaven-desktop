@@ -5,12 +5,10 @@ import { ModeToggle } from "@/components/mode-toggle";
 import Image from "@/components/ui/image";
 import { useMediaQuery } from 'react-responsive';
 import Waterfall, { WaterfallItem } from "@/components/water-fall";
-// import { Carousel } from "@/components/ui/cards-carousel";
 import Draggable from 'react-draggable';
 
 import { useDownloadListeners } from "./hooks/use-listen-download";
 import WallpaperPreviewDialog from "@/components/wallpaper-preview-dialog";
-// import Swiper from "@/components/swiper";
 import {
   Tooltip,
   TooltipContent,
@@ -19,9 +17,6 @@ import {
 } from "@/components/ui/tooltip";
 import {
   CalendarIcon,
-  ChevronLeft,
-  ChevronRight,
-  Download,
   Loader,
   HomeIcon,
   MailIcon,
@@ -31,17 +26,9 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Dock, DockIcon } from "@/components/ui/dock";
 import { cn } from "./lib/utils";
-// import { ParallaxScroll } from "./components/ui/parallax-scroll";
-import { Swiper, SwiperSlide } from "swiper/react";
-
-// Import Swiper styles
-import "swiper/css";
-// import "swiper/css/effect-cards";
-import { A11y, Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Input } from "./components/ui/input";
-import { motion, progress } from "framer-motion";
-import { CardContent, Card } from "./components/ui/card";
-import { Badge } from "./components/ui/badge";
+import { motion } from "framer-motion";
+import { Card } from "./components/ui/card";
 
 function App() {
   const [progress, setProgress] = useState(0);
@@ -145,8 +132,9 @@ function App() {
     <div>
       <SidebarDesktop>
         <div className="flex-1 overflow-x-hidden" ref={scrollRef}>
-          <div className="flex w-full justify-between p-4">
+          <div className="flex w-full justify-between p-4 px-8 mb-6">
             <Search />
+            <PassionBtn />
           </div>
           <div className="z-10">
             <DockActionBar />
@@ -594,8 +582,9 @@ import {
   IconArrowLeft,
   IconBrandTabler,
   IconSettings,
-  IconUserBolt,
+  IconRobot,
 } from "@tabler/icons-react";
+import PassionBtn from "./components/passionBtn";
 
 export function SidebarDesktop({ children }) {
   const links = [
@@ -607,10 +596,10 @@ export function SidebarDesktop({ children }) {
       ),
     },
     {
-      label: "Profile",
+      label: "AI Generate",
       href: "#",
       icon: (
-        <IconUserBolt className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+        <IconRobot className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
     },
     {

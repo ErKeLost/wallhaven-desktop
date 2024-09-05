@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import InteractiveResolutionPicker from "./interactiveResolutionPicker";
+import { FollowerPointerCard } from "./ui/following-pointer";
 
 export default function WallpaperPreviewDialog({
   isOpen,
@@ -35,7 +36,7 @@ export default function WallpaperPreviewDialog({
 
   const handlePickerClose = useCallback(() => {
     console.log("这个方法会执行么");
-    
+
     setIsPickerOpen(false);
     // We don't call onClose() here, so the main dialog stays open
   }, []);
@@ -49,11 +50,26 @@ export default function WallpaperPreviewDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[95vw] h-[95vh] sm:w-[90vw] sm:h-[90vh] md:w-[80vw] md:h-[80vh] lg:w-[70vw] lg:h-[70vh] xl:w-[70vw] xl:h-[70vh] max-w-[1200px] max-h-[800px] flex flex-col">
+
+      <DialogContent
+        className="w-[95vw] h-[95vh] sm:w-[90vw] sm:h-[90vh] md:w-[80vw] md:h-[80vh] lg:w-[70vw] lg:h-[70vh] xl:w-[70vw] xl:h-[70vh] max-w-[1200px] max-h-[800px] flex flex-col overflow-hidden">
+
         <DialogHeader className="flex-shrink-0">
           <DialogTitle>壁纸预览 下载进度{progress}</DialogTitle>
           <DialogDescription>高清壁纸 - ID：{image.id}</DialogDescription>
         </DialogHeader>
+
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: `url(${image.path})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'blur(10px)', // 添加模糊效果
+            opacity: 0.6, // 降低透明度
+            transform: 'scale(1.1)', // 稍微放大以覆盖模糊边缘
+          }}
+        />
         <div
           className="flex-grow overflow-y-auto mt-4 relative"
           onClick={handleImageClick}
@@ -71,6 +87,11 @@ export default function WallpaperPreviewDialog({
             </span>
           </div>
           {isPickerOpen && (
+            // <FollowerPointerCard
+
+            //   title={
+            //     <div>114564564156</div>
+            //   }>
             <InteractiveResolutionPicker
               isOpen={isPickerOpen}
               onClose={handlePickerClose}
@@ -78,6 +99,7 @@ export default function WallpaperPreviewDialog({
               imageUrl={image.path}
               onOpen={() => setIsPickerOpen(true)}
             />
+            // </FollowerPointerCard>
           )}
         </div>
         <div className="flex-shrink-0 mt-4 flex justify-between items-center">
@@ -104,6 +126,6 @@ export default function WallpaperPreviewDialog({
           </div>
         </div>
       </DialogContent>
-    </Dialog>
+    </Dialog >
   );
 }
