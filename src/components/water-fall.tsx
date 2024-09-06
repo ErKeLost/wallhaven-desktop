@@ -85,7 +85,6 @@ export default function Waterfall<T extends WaterfallItem>(props: WaterfallProps
 
   useEffect(() => {
     const scrollContainer = scrollRef.current;
-
     if (scrollContainer) {
       scrollContainer.addEventListener('scroll', handleScroll);
       return () => {

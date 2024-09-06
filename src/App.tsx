@@ -6,7 +6,10 @@ import Image from "@/components/ui/image";
 import { useMediaQuery } from 'react-responsive';
 import Waterfall, { WaterfallItem } from "@/components/water-fall";
 import Draggable from 'react-draggable';
-
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import Dashboard from '@/views/home';
+import AI from '@/views/ai';
+import Setting from '@/views/setting';
 import { useDownloadListeners } from "./hooks/use-listen-download";
 import WallpaperPreviewDialog from "@/components/wallpaper-preview-dialog";
 import {
@@ -21,6 +24,10 @@ import {
   HomeIcon,
   MailIcon,
   PencilIcon,
+  TrendingUpIcon,
+  Shuffle,
+  PartyPopper,
+  LogOut
 } from "lucide-react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -30,211 +37,237 @@ import { Input } from "./components/ui/input";
 import { motion } from "framer-motion";
 import { Card } from "./components/ui/card";
 
-function App() {
-  const [progress, setProgress] = useState(0);
-  const [imageData, setImageData] = useState(null);
-  const [topQuery, setTopQuery] = useState({
-    page: 1,
-    toprange: "3M",
-  });
+// function App() {
+//   const [progress, setProgress] = useState(0);
+//   const [imageData, setImageData] = useState(null);
+//   const [topQuery, setTopQuery] = useState({
+//     page: 1,
+//     toprange: "1y",
+//   });
 
-  const query = useCallback(async () => {
-    setTopQuery((prevState) => ({ ...prevState, page: prevState.page + 1 }));
-    const res = await fetch(
-      `https://heaven-walls-api.vercel.app/api/wallhaven/topwalls?page=${topQuery.page}&toprange=${topQuery.toprange}`
-    );
-    const data = await res.json();
-    console.log(data);
-    setImageData(data.data);
-  }, [topQuery.page, topQuery.toprange]);
+//   const query = useCallback(async () => {
+//     setTopQuery((prevState) => ({ ...prevState, page: prevState.page + 1 }));
+//     const res = await fetch(
+//       `https://heaven-walls-api.vercel.app/api/wallhaven/topwalls?page=${topQuery.page}&toprange=${topQuery.toprange}`
+//     );
+//     const data = await res.json();
+//     console.log(data);
+//     setImageData(data.data);
+//   }, [topQuery.page, topQuery.toprange]);
 
-  useEffect(() => {
-    query();
-  }, []);
+//   useEffect(() => {
+//     query();
+//   }, []);
 
-  const changePaper = async (item) => {
-    await invoke("download_and_set_wallpaper", {
-      url: item.path,
-      fileName: "wallhaven-" + item.id,
-      // resolutions: `${9999}x${1000}`
-    });
-  };
+//   const changePaper = async (item) => {
+//     await invoke("download_and_set_wallpaper", {
+//       url: item.path,
+//       fileName: "wallhaven-" + item.id,
+//       // resolutions: `${9999}x${1000}`
+//     });
+//   };
 
-  const queryPaper = () => {
-    query();
-  };
+//   const queryPaper = () => {
+//     query();
+//   };
 
-  const { startListening, stopListening, isListening } = useDownloadListeners();
+//   const { startListening, stopListening, isListening } = useDownloadListeners();
 
-  // 当需要开始监听时调用
-  const handleStartDownload = useCallback(() => {
-    startListening();
-    // 其他下载开始的逻辑...
-  }, [startListening]);
+//   // 当需要开始监听时调用
+//   const handleStartDownload = useCallback(() => {
+//     startListening();
+//     // 其他下载开始的逻辑...
+//   }, [startListening]);
 
-  // 当需要停止监听时调用
-  const handleStopDownload = useCallback(() => {
-    stopListening();
-    // 其他下载停止的逻辑...
-  }, [stopListening]);
+//   // 当需要停止监听时调用
+//   const handleStopDownload = useCallback(() => {
+//     stopListening();
+//     // 其他下载停止的逻辑...
+//   }, [stopListening]);
 
-  // 在组件卸载时确保停止监听
-  useEffect(() => {
-    return () => {
-      if (isListening) {
-        stopListening();
-      }
-    };
-  }, [isListening, stopListening]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+//   // 在组件卸载时确保停止监听
+//   useEffect(() => {
+//     return () => {
+//       if (isListening) {
+//         stopListening();
+//       }
+//     };
+//   }, [isListening, stopListening]);
+//   const [isDialogOpen, setIsDialogOpen] = useState(false);
+//   const [selectedImage, setSelectedImage] = useState(null);
 
-  const handleImageClick = (item) => {
-    setSelectedImage(item);
-    setIsDialogOpen(true);
-  };
-  const swiperRef = useRef(null);
+//   const handleImageClick = (item) => {
+//     setSelectedImage(item);
+//     setIsDialogOpen(true);
+//   };
+//   const swiperRef = useRef(null);
 
-  useEffect(() => {
-    if (swiperRef.current && swiperRef.current.swiper) {
-      swiperRef.current.swiper.autoplay.start();
-    }
-  }, []);
+//   useEffect(() => {
+//     if (swiperRef.current && swiperRef.current.swiper) {
+//       swiperRef.current.swiper.autoplay.start();
+//     }
+//   }, []);
 
-  useEffect(() => {
-    const unlisten1 = listen('download_start', () => {
-      // setStatus('下载开始');
-      console.log('download_start');
+//   useEffect(() => {
+//     const unlisten1 = listen('download_start', () => {
+//       // setStatus('下载开始');
+//       console.log('download_start');
 
-    });
+//     });
 
-    const unlisten2 = listen('download_progress', (event: { payload: number }) => {
-      // setProgress(event.payload);
-      console.log('download_progress', event.payload);
-      setProgress(event.payload);
-    });
+//     const unlisten2 = listen('download_progress', (event: { payload: number }) => {
+//       // setProgress(event.payload);
+//       console.log('download_progress', event.payload);
+//       setProgress(event.payload);
+//     });
 
-    const unlisten3 = listen('download_complete', () => {
-      // setStatus('下载完成');
-      console.log('download_complete');
-    });
+//     const unlisten3 = listen('download_complete', () => {
+//       // setStatus('下载完成');
+//       console.log('download_complete');
+//     });
 
-    return () => {
-      unlisten1.then(f => f());
-      unlisten2.then(f => f());
-      unlisten3.then(f => f());
-    };
-  }, []);
+//     return () => {
+//       unlisten1.then(f => f());
+//       unlisten2.then(f => f());
+//       unlisten3.then(f => f());
+//     };
+//   }, []);
 
-  const scrollRef = useRef(null);
+//   const scrollRef = useRef(null);
 
-  return (
-    <div>
-      <SidebarDesktop>
-        <div className="flex-1 overflow-x-hidden" ref={scrollRef}>
-          <div className="flex w-full justify-between p-4 px-8 mb-6">
-            <Search />
-            <PassionBtn />
-          </div>
-          <div className="z-10">
-            <DockActionBar />
-          </div>
-          {/* <WaterFallComp onImageClick={handleImageClick} scrollRef={scrollRef} /> */}
-        </div >
-      </SidebarDesktop >
-      <WallpaperPreviewDialog
-        progress={progress}
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        image={selectedImage}
-        changePaper={changePaper}
-      />
+//   return (
+//     <div>
+//       <SidebarDesktop>
+//         <div className="flex-1 overflow-x-hidden" ref={scrollRef}>
+//           <div className="flex w-full justify-between items-center p-4 px-8 mb-6">
+//             <Search />
+//             <div className="flex items-center gap-20">
+//               <div className="flex items-center gap-4">
+//                 <Link
+//                   href="#"
+//                   className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+//                   prefetch={false}
+//                 >
+//                   <PartyPopper className="h-5 w-5" />
+//                   Popular
+//                 </Link>
+//                 <Link
+//                   href="#"
+//                   className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+//                   prefetch={false}
+//                 >
+//                   <SearchIcon className="h-5 w-5" />
+//                   Latest
+//                 </Link>
+//                 <Link
+//                   href="#"
+//                   className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+//                   prefetch={false}
+//                 >
+//                   <Shuffle className="h-5 w-5" />
+//                   Random
+//                 </Link>
+//               </div>
+//               <SignIn />
+//             </div>
+//           </div>
+//           <div className="z-10">
+//             <DockActionBar />
+//           </div>
+//           {/* <WaterFallComp onImageClick={handleImageClick} scrollRef={scrollRef} /> */}
+//         </div >
+//       </SidebarDesktop>
+//       <WallpaperPreviewDialog
+//         progress={progress}
+//         isOpen={isDialogOpen}
+//         onClose={() => setIsDialogOpen(false)}
+//         image={selectedImage}
+//         changePaper={changePaper}
+//       />
 
-      {/* <main className="px-4 pb-12 grid grid-cols-1 lg:grid-cols-[60%_40%] h-auto md:h-[65vh]">
-        <div className="relative rounded-2xl overflow-hidden shadow-2xl mb-4 md:mb-0">
-          {imageData?.length && (
-            <Swiper
-              ref={swiperRef}
-              modules={[Navigation, Pagination, A11y, Autoplay]}
-              spaceBetween={0}
-              slidesPerView={1}
-              navigation={{
-                prevEl: ".swiper-button-prev",
-                nextEl: ".swiper-button-next",
-              }}
-              pagination={{ clickable: true }}
-              loop={true}
-              autoplay={{
-                delay: 3000,
-                disableOnInteraction: false,
-              }}
-              className="h-full"
-            >
-              {imageData?.map((wallpaper) => (
-                <SwiperSlide key={wallpaper.id}>
-                  <div
-                    className="relative h-full"
-                    onClick={() => handleImageClick(wallpaper)}
-                  >
-                    <img
-                      src={wallpaper.path}
-                      alt={wallpaper.alt}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4 md:p-8">
-                      <div className="w-full">
-                        <h2 className="text-3xl md:text-5xl font-bold mb-2 md:mb-4 tracking-tight">
-                          {wallpaper.title}
-                        </h2>
-                        <p className="text-base md:text-xl text-gray-300 mb-3 md:mb-6 max-w-2xl">
-                          探索每日精心挑选的壁纸，让您的屏幕焕发艺术光彩。
-                        </p>
-                        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-                          <Button className="bg-white text-black hover:bg-gray-200 transition-colors w-full sm:w-auto">
-                            立即下载
-                          </Button>
-                          <Button
-                            variant="outline"
-                            className="text-white border-white hover:bg-white/20 transition-colors w-full sm:w-auto"
-                          >
-                            查看详情
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </SwiperSlide>
-              ))}
-              <div className="swiper-button-prev absolute left-2 md:left-4 top-1/2 z-10 transform -translate-y-1/2">
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="text-white hover:text-purple-400 transition-colors"
-                >
-                  <ChevronLeft className="h-6 w-6 md:h-8 md:w-8" />
-                </Button>
-              </div>
-              <div className="swiper-button-next absolute right-2 md:right-4 top-1/2 z-10 transform -translate-y-1/2">
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="text-white hover:text-purple-400 transition-colors"
-                >
-                  <ChevronRight className="h-6 w-6 md:h-8 md:w-8" />
-                </Button>
-              </div>
-            </Swiper>
-          )}
-        </div>
-        <Tags />
-      </main> */}
+//       {/* <main className="px-4 pb-12 grid grid-cols-1 lg:grid-cols-[60%_40%] h-auto md:h-[65vh]">
+//         <div className="relative rounded-2xl overflow-hidden shadow-2xl mb-4 md:mb-0">
+//           {imageData?.length && (
+//             <Swiper
+//               ref={swiperRef}
+//               modules={[Navigation, Pagination, A11y, Autoplay]}
+//               spaceBetween={0}
+//               slidesPerView={1}
+//               navigation={{
+//                 prevEl: ".swiper-button-prev",
+//                 nextEl: ".swiper-button-next",
+//               }}
+//               pagination={{ clickable: true }}
+//               loop={true}
+//               autoplay={{
+//                 delay: 3000,
+//                 disableOnInteraction: false,
+//               }}
+//               className="h-full"
+//             >
+//               {imageData?.map((wallpaper) => (
+//                 <SwiperSlide key={wallpaper.id}>
+//                   <div
+//                     className="relative h-full"
+//                     onClick={() => handleImageClick(wallpaper)}
+//                   >
+//                     <img
+//                       src={wallpaper.path}
+//                       alt={wallpaper.alt}
+//                       className="w-full h-full object-cover"
+//                     />
+//                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4 md:p-8">
+//                       <div className="w-full">
+//                         <h2 className="text-3xl md:text-5xl font-bold mb-2 md:mb-4 tracking-tight">
+//                           {wallpaper.title}
+//                         </h2>
+//                         <p className="text-base md:text-xl text-gray-300 mb-3 md:mb-6 max-w-2xl">
+//                           探索每日精心挑选的壁纸，让您的屏幕焕发艺术光彩。
+//                         </p>
+//                         <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+//                           <Button className="bg-white text-black hover:bg-gray-200 transition-colors w-full sm:w-auto">
+//                             立即下载
+//                           </Button>
+//                           <Button
+//                             variant="outline"
+//                             className="text-white border-white hover:bg-white/20 transition-colors w-full sm:w-auto"
+//                           >
+//                             查看详情
+//                           </Button>
+//                         </div>
+//                       </div>
+//                     </div>
+//                   </div>
+//                 </SwiperSlide>
+//               ))}
+//               <div className="swiper-button-prev absolute left-2 md:left-4 top-1/2 z-10 transform -translate-y-1/2">
+//                 <Button
+//                   size="icon"
+//                   variant="ghost"
+//                   className="text-white hover:text-purple-400 transition-colors"
+//                 >
+//                   <ChevronLeft className="h-6 w-6 md:h-8 md:w-8" />
+//                 </Button>
+//               </div>
+//               <div className="swiper-button-next absolute right-2 md:right-4 top-1/2 z-10 transform -translate-y-1/2">
+//                 <Button
+//                   size="icon"
+//                   variant="ghost"
+//                   className="text-white hover:text-purple-400 transition-colors"
+//                 >
+//                   <ChevronRight className="h-6 w-6 md:h-8 md:w-8" />
+//                 </Button>
+//               </div>
+//             </Swiper>
+//           )}
+//         </div>
+//         <Tags />
+//       </main> */}
 
-    </div >
-  );
-}
-// export function ParallaxScrollDemo() {
-//   return <ParallaxScroll images={imageData} />;
+//     </div >
+//   );
 // }
+
 
 export function CardsCarousel({ imageData, onChangePaper }) {
   return (
@@ -389,25 +422,32 @@ export function DockActionBar() {
 
 export function Search() {
   return (
-    <div className="rounded-lg shadow-sm p-4 w-[20%]">
+    <div className="rounded-lg p-4 min-w-[220px]">
       <div className="relative">
-        <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+        <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60" />
         <Input
-          type="search"
           placeholder="Search..."
-          className="pl-10 pr-10 rounded-md border border-input bg-transparent py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="pl-10 pr-10 rounded-md border border-white/20 bg-transparent py-2 text-sm ring-offset-background placeholder:text-white/60 focus:outline-none focus:ring-0 focus:border-white/20 min-w-[220px]"
         />
         <Button
           variant="ghost"
           size="icon"
           className="absolute right-2 top-1/2 -translate-y-1/2"
         >
-          <XIcon className="w-5 h-5" />
+          <XIcon className="w-5 h-5 text-white/60" />
           <span className="sr-only">Clear</span>
         </Button>
       </div>
     </div>
   );
+}
+
+export function SignIn() {
+  return (
+    <div className="flex justify-center">
+      <Button className="focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">Sign In</Button>
+    </div>
+  )
 }
 
 function SearchIcon(props) {
@@ -448,38 +488,6 @@ function XIcon(props) {
       <path d="m6 6 12 12" />
     </svg>
   );
-}
-
-
-export function Tags() {
-  return (
-    <div className="p-4 rounded-lg h-full flex items-center overflow-auto scrollbar-hide">
-      <div className="flex flex-wrap justify-center gap-4 text-[#9ffb9b]">
-        <div className="text-3xl whitespace-nowrap">#fantasy art</div>
-        <div className="text-lg whitespace-nowrap">#pixel art</div>
-        <div className="text-4xl whitespace-nowrap">#Zenless Zone Zero</div>
-        <div className="text-lg whitespace-nowrap">#WLOP</div>
-        <div className="text-3xl whitespace-nowrap">#Naruto (anime)</div>
-        <div className="text-sm whitespace-nowrap">#synthwave</div>
-        <div className="text-lg font-bold whitespace-nowrap">#Wuthering Waves</div>
-        <div className="text-3xl whitespace-nowrap">#Naruto Shippuden</div>
-        <div className="text-lg font-bold whitespace-nowrap">#Black Myth: Wukong</div>
-        <div className="text-lg font-bold whitespace-nowrap">#environment</div>
-        <div className="text-3xl whitespace-nowrap">#Studio Ghibli</div>
-        <div className="text-sm whitespace-nowrap">#Sparkle (Honkai: Star Rail)</div>
-        <div className="text-3xl whitespace-nowrap">#Kafka (Honkai: Star Rail)</div>
-        <div className="text-lg font-bold whitespace-nowrap">#nature</div>
-        <div className="text-lg font-bold whitespace-nowrap">#artwork</div>
-        <div className="text-3xl whitespace-nowrap">#Cyberpunk 2077</div>
-        <div className="text-3xl whitespace-nowrap">#abstract</div>
-        <div className="text-sm whitespace-nowrap">#dark</div>
-        <div className="text-lg font-bold whitespace-nowrap">#futuristic</div>
-        <div className="text-sm whitespace-nowrap">#Berserk</div>
-        <div className="text-lg font-bold whitespace-nowrap">#black background</div>
-        <div className="text-sm whitespace-nowrap">#One Piece</div>
-      </div>
-    </div>
-  )
 }
 
 export function WaterFallComp({ onImageClick, scrollRef }) {
@@ -579,32 +587,30 @@ export function WaterFallComp({ onImageClick, scrollRef }) {
 
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import {
-  IconArrowLeft,
   IconBrandTabler,
   IconSettings,
   IconRobot,
 } from "@tabler/icons-react";
-import PassionBtn from "./components/passionBtn";
 
 export function SidebarDesktop({ children }) {
   const links = [
     {
       label: "Dashboard",
-      href: "#",
+      href: "/dashboard",
       icon: (
         <IconBrandTabler className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
     },
     {
       label: "AI Generate",
-      href: "#",
+      href: "/ai-generate",
       icon: (
         <IconRobot className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
     },
     {
       label: "Settings",
-      href: "#",
+      href: "/settings",
       icon: (
         <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
@@ -613,7 +619,7 @@ export function SidebarDesktop({ children }) {
       label: "Logout",
       href: "#",
       icon: (
-        <IconArrowLeft className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+        <LogOut className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
     },
   ];
@@ -686,28 +692,20 @@ export const LogoIcon = () => {
   );
 };
 
-// Dummy dashboard component with content
-const Dashboard = () => {
+function App() {
   return (
-    <div className="flex flex-1">
-      <div className="p-2 md:p-10 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full h-full">
-        <div className="flex gap-2">
-          {[...new Array(4)].map((i) => (
-            <div
-              key={"first-array" + i}
-              className="h-20 w-full rounded-lg  bg-gray-100 dark:bg-neutral-800 animate-pulse"
-            ></div>
-          ))}
-        </div>
-        <div className="flex gap-2 flex-1">
-          {[...new Array(2)].map((i) => (
-            <div
-              key={"second-array" + i}
-              className="h-full w-full rounded-lg  bg-gray-100 dark:bg-neutral-800 animate-pulse"
-            ></div>
-          ))}
-        </div>
+    <Router>
+      <div className="flex h-screen">
+        <SidebarDesktop>
+          <Routes>
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/ai-generate" element={<AI />} />
+            <Route path="/settings" element={<Setting />} />
+          </Routes>
+        </SidebarDesktop>
       </div>
-    </div>
+    </Router>
   );
-};
+}
+
