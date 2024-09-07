@@ -35,8 +35,6 @@ export default function WallpaperPreviewDialog({
   }, []);
 
   const handlePickerClose = useCallback(() => {
-    console.log("这个方法会执行么");
-
     setIsPickerOpen(false);
     // We don't call onClose() here, so the main dialog stays open
   }, []);
@@ -65,13 +63,13 @@ export default function WallpaperPreviewDialog({
             backgroundImage: `url(${image.path})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            filter: 'blur(10px)', // 添加模糊效果
-            opacity: 0.6, // 降低透明度
-            transform: 'scale(1.1)', // 稍微放大以覆盖模糊边缘
+            filter: 'blur(10px)',
+            opacity: 0.6, 
+            transform: 'scale(1.1)',
           }}
         />
         <div
-          className="flex-grow overflow-y-auto mt-4 relative"
+          className="flex-grow overflow-y-auto mt-4 relative z-1"
           onClick={handleImageClick}
         >
           <Image
@@ -87,11 +85,6 @@ export default function WallpaperPreviewDialog({
             </span>
           </div>
           {isPickerOpen && (
-            // <FollowerPointerCard
-
-            //   title={
-            //     <div>114564564156</div>
-            //   }>
             <InteractiveResolutionPicker
               isOpen={isPickerOpen}
               onClose={handlePickerClose}
@@ -99,10 +92,9 @@ export default function WallpaperPreviewDialog({
               imageUrl={image.path}
               onOpen={() => setIsPickerOpen(true)}
             />
-            // </FollowerPointerCard>
           )}
         </div>
-        <div className="flex-shrink-0 mt-4 flex justify-between items-center">
+        <div className="flex-shrink-0 mt-4 flex justify-between items-center relative z-2">
           <div className="text-sm text-muted-foreground">
             分辨率：{image.resolution || "未知"}
           </div>
