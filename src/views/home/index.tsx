@@ -3,9 +3,9 @@ import { listen } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/tauri";
 import { ModeToggle } from "@/components/mode-toggle";
 import Image from "@/components/ui/image";
-import { useMediaQuery } from 'react-responsive';
+import { useMediaQuery } from "react-responsive";
 import Waterfall, { WaterfallItem } from "@/components/water-fall";
-import Draggable from 'react-draggable';
+import Draggable from "react-draggable";
 import Link from "@/components/ui/link";
 import { useDownloadListeners } from "@/hooks/use-listen-download";
 import WallpaperPreviewDialog from "@/components/wallpaper-preview-dialog";
@@ -35,133 +35,182 @@ import Loading from "@/components/ui/loading";
 
 export default function Dashboard() {
   const [progress, setProgress] = useState(0);
-  const [imageData, setImageData] = useState(null);
-  const [topQuery, setTopQuery] = useState({
-    page: 1,
-    toprange: "1y",
-  });
+  const [imageData, setImageData] = useState([]);
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState("Home");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [lastSearchTerm, setLastSearchTerm] = useState('');
+  const scrollRef = useRef(null);
 
-  const query = useCallback(async () => {
-    setTopQuery((prevState) => ({ ...prevState, page: prevState.page + 1 }));
-    const res = await fetch(
-      `https://heaven-walls-api.vercel.app/api/wallhaven/topwalls?page=${topQuery.page}&toprange=${topQuery.toprange}`
-    );
-    const data = await res.json();
-    console.log(data);
-    setImageData(data.data);
-  }, [topQuery.page, topQuery.toprange]);
+  const fetchData = useCallback(async (tab, currentPage = 1, searchTerm = '') => {
+    setIsLoading(true);
+    setError(null);
+
+    const baseUrl = "https://heaven-walls-api.vercel.app/api/wallhaven";
+    try {
+      let url;
+      if (searchTerm) {
+        url = `${baseUrl}/search?search=${encodeURIComponent(searchTerm)}&page=${currentPage}`;
+      } else {
+        switch (tab) {
+          case "Home":
+            url = `${baseUrl}/home?page=${currentPage}`;
+            break;
+          case "Popular":
+            url = `${baseUrl}/topwalls?page=${currentPage}&toprange=1M`;
+            break;
+          case "Latest":
+            url = `${baseUrl}/latest?page=${currentPage}`;
+            break;
+          case "Random":
+            url = `${baseUrl}/random?page=${currentPage}`;
+            break;
+          default:
+            url = `${baseUrl}/topwalls?page=${currentPage}&toprange=1M`;
+        }
+      }
+      const res = await fetch(url);
+      const data = await res.json();
+      return data.data;
+    } catch (err) {
+      setError(err.message);
+      return [];
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const loadInitialData = useCallback(async (tab) => {
+    const initialData = await fetchData(tab, 1);
+    setImageData(initialData);
+  }, [fetchData]);
+
+  const handleTabClick = useCallback((tab) => {
+    // 清空现有数据
+    setImageData([]);
+    
+    // 重置页码为1
+    setPage(1);
+    
+    // 设置加载状态
+    setIsLoading(true);
+    
+    // 更新活动标签
+    setActiveTab(tab);
+    
+    // 加载新数据
+    loadInitialData(tab).finally(() => {
+      // 加载完成后,结束加载状态
+      setIsLoading(false);
+    });
+  }, [loadInitialData]);
+
+
+  const onLoadMore = useCallback(async () => {
+    if (isLoading) return;
+    const nextPage = page + 1;
+    const newData = await fetchData(activeTab, nextPage, lastSearchTerm);
+    setImageData(prevData => [...prevData, ...newData]);
+    setPage(nextPage);
+  }, [fetchData, page, isLoading, activeTab, lastSearchTerm]);
 
   useEffect(() => {
-    query();
-  }, []);
+    loadInitialData(activeTab);
+  }, [loadInitialData, activeTab]);
 
   const changePaper = async (item) => {
     await invoke("download_and_set_wallpaper", {
       url: item.path,
       fileName: "wallhaven-" + item.id,
-      // resolutions: `${9999}x${1000}`
     });
   };
-
-  const queryPaper = () => {
-    query();
-  };
-
-  const { startListening, stopListening, isListening } = useDownloadListeners();
-
-  // 当需要开始监听时调用
-  const handleStartDownload = useCallback(() => {
-    startListening();
-    // 其他下载开始的逻辑...
-  }, [startListening]);
-
-  // 当需要停止监听时调用
-  const handleStopDownload = useCallback(() => {
-    stopListening();
-    // 其他下载停止的逻辑...
-  }, [stopListening]);
-
-  // 在组件卸载时确保停止监听
-  useEffect(() => {
-    return () => {
-      if (isListening) {
-        stopListening();
-      }
-    };
-  }, [isListening, stopListening]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
 
   const handleImageClick = (item) => {
     setSelectedImage(item);
     setIsDialogOpen(true);
   };
-  const swiperRef = useRef(null);
+
+  const { startListening, stopListening, isListening } = useDownloadListeners();
 
   useEffect(() => {
-    if (swiperRef.current && swiperRef.current.swiper) {
-      swiperRef.current.swiper.autoplay.start();
-    }
-  }, []);
-
-  useEffect(() => {
-    const unlisten1 = listen('download_start', () => {
-      // setStatus('下载开始');
-      console.log('download_start');
-
+    const unlisten1 = listen("download_start", () => {
+      console.log("download_start");
     });
 
-    const unlisten2 = listen('download_progress', (event: { payload: number }) => {
-      // setProgress(event.payload);
-      console.log('download_progress', event.payload);
-      setProgress(event.payload);
-    });
+    const unlisten2 = listen(
+      "download_progress",
+      (event: { payload: number }) => {
+        console.log("download_progress", event.payload);
+        setProgress(event.payload);
+      }
+    );
 
-    const unlisten3 = listen('download_complete', () => {
-      // setStatus('下载完成');
-      console.log('download_complete');
+    const unlisten3 = listen("download_complete", () => {
+      console.log("download_complete");
     });
 
     return () => {
-      unlisten1.then(f => f());
-      unlisten2.then(f => f());
-      unlisten3.then(f => f());
+      unlisten1.then((f) => f());
+      unlisten2.then((f) => f());
+      unlisten3.then((f) => f());
     };
   }, []);
-  
-  const scrollRef = useRef(null);
 
+  const handleSearch = useCallback(async (searchTerm) => {
+    console.log("开始搜索:", searchTerm);
+    
+    // 立即更新状态，触发重新渲染
+    setImageData([]);
+    setPage(1);
+    setIsLoading(true);
+    setLastSearchTerm(searchTerm);
+  
+    try {
+      const searchData = await fetchData("Search", 1, searchTerm);
+      console.log("搜索结果:", searchData);
+      
+      // 使用函数式更新确保我们使用最新的状态
+      setImageData(prevData => {
+        console.log("更新前的数据:", prevData);
+        console.log("新的搜索数据:", searchData);
+        return searchData;
+      });
+    } catch (error) {
+      console.error("搜索出错:", error);
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [fetchData]);
+  
   return (
     <>
-      <div className="flex-1 w-full overflow-x-hidden" ref={scrollRef} >
+      <div className="flex-1 w-full overflow-x-hidden" ref={scrollRef}>
         <div className="flex w-full justify-between items-center p-4 px-8 mb-6">
-          <Search />
+          <Search onSearch={handleSearch} />
           <div className="flex items-center gap-20">
             <div className="flex items-center gap-4">
-              <Link
-                href="#"
-                className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                prefetch={false}
-              >
-                <PartyPopper className="h-5 w-5" />
-                Popular
-              </Link>
-              <Link
-                href="#"
-                className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                prefetch={false}
-              >
-                <SearchIcon className="h-5 w-5" />
-                Latest
-              </Link>
-              <Link
-                href="#"
-                className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                prefetch={false}
-              >
-                <Shuffle className="h-5 w-5" />
-                Random
-              </Link>
+              {["Home", "Popular", "Latest", "Random"].map((tab) => (
+                <Link
+                  key={tab}
+                  href="#"
+                  className={cn(
+                    "inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                    activeTab === tab && "bg-muted text-muted-foreground"
+                  )}
+                  prefetch={false}
+                  onClick={() => handleTabClick(tab)}
+                >
+                  {tab === "Home" && <HomeIcon className="h-5 w-5" />}
+                  {tab === "Popular" && <PartyPopper className="h-5 w-5" />}
+                  {tab === "Latest" && <SearchIcon className="h-5 w-5" />}
+                  {tab === "Random" && <Shuffle className="h-5 w-5" />}
+                  {tab}
+                </Link>
+              ))}
             </div>
             <SignIn />
           </div>
@@ -169,8 +218,15 @@ export default function Dashboard() {
         <div className="z-10">
           <DockActionBar />
         </div>
-        <WaterFallComp onImageClick={handleImageClick} scrollRef={scrollRef} />
-      </div >
+        <WaterFallComp
+          key={lastSearchTerm || activeTab}
+          onImageClick={handleImageClick}
+          scrollRef={scrollRef}
+          imageData={imageData}
+          onLoadMore={onLoadMore}
+          isLoading={isLoading}
+        />
+      </div>
       <WallpaperPreviewDialog
         progress={progress}
         isOpen={isDialogOpen}
@@ -179,6 +235,63 @@ export default function Dashboard() {
         changePaper={changePaper}
       />
     </>
+  );
+}
+
+export function WaterFallComp({
+  onImageClick,
+  scrollRef,
+  imageData,
+  onLoadMore,
+  isLoading,
+}) {
+  const isExtraLargeScreen = useMediaQuery({ minWidth: 2560 });
+  const isLargeScreen = useMediaQuery({ minWidth: 1920, maxWidth: 2559 });
+  const isMediumScreen = useMediaQuery({ minWidth: 1280, maxWidth: 1919 });
+  const isSmallScreen = useMediaQuery({ minWidth: 768, maxWidth: 1279 });
+  const isExtraSmallScreen = useMediaQuery({ maxWidth: 767 });
+
+  const getCols = () => {
+    if (isExtraLargeScreen) return 5; // 2560px 及以上
+    if (isLargeScreen) return 5; // 1920px - 2559px
+    if (isMediumScreen) return 4; // 1280px - 1919px
+    if (isSmallScreen) return 2; // 768px - 1279px
+    if (isExtraSmallScreen) return 1; // 767px 及以下
+    return 5; // 默认值
+  };
+
+
+  return (
+    <main className="w-full overflow-y-auto">
+      {imageData.length > 0 ? (
+        <Waterfall
+          scrollRef={scrollRef}
+          cols={getCols()}
+          marginX={10}
+          items={imageData}
+          itemRender={(item, index) => (
+            <Card
+              onClick={() => onImageClick(item)}
+              className="my-2 rounded-xl overflow-hidden"
+            >
+              <Image src={item.thumbs.large} className="w-full" />
+            </Card>
+          )}
+          onLoadMore={onLoadMore}
+        />
+      ) : !isLoading && (
+        <div className="flex justify-center items-center py-8">
+          没有找到相关图片
+        </div>
+      )}
+      {isLoading && (
+        <div className="flex justify-center items-center py-8">
+          <div className="animate-spin">
+            <Loading />
+          </div>
+        </div>
+      )}
+    </main>
   );
 }
 
@@ -263,7 +376,10 @@ export function DockActionBar() {
   const nodeRef = useRef(null);
   return (
     <Draggable nodeRef={nodeRef} defaultPosition={{ x: 0, y: 0 }}>
-      <div ref={nodeRef} className="cursor-move !fixed z-10 inset-x-0 bottom-16 flex justify-center">
+      <div
+        ref={nodeRef}
+        className="cursor-move !fixed z-10 inset-x-0 bottom-16 flex justify-center"
+      >
         <TooltipProvider>
           <Dock direction="middle">
             {DATA.navbar.map((item) => (
@@ -321,11 +437,19 @@ export function DockActionBar() {
           </Dock>
         </TooltipProvider>
       </div>
-    </Draggable >
+    </Draggable>
   );
 }
 
-export function Search() {
+export function Search({ onSearch }) {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearch = (e) => {
+    if (e.key === "Enter") {
+      onSearch(searchTerm);
+    }
+  };
+
   return (
     <div className="rounded-lg p-4 min-w-[220px]">
       <div className="relative">
@@ -333,11 +457,15 @@ export function Search() {
         <Input
           placeholder="Search..."
           className="pl-10 pr-10 rounded-md border border-white/20 bg-transparent py-2 text-sm ring-offset-background placeholder:text-white/60 focus:outline-none focus:ring-0 focus:border-white/20 min-w-[220px]"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyPress={handleSearch}
         />
         <Button
           variant="ghost"
           size="icon"
           className="absolute right-2 top-1/2 -translate-y-1/2"
+          onClick={() => setSearchTerm("")}
         >
           <XIcon className="w-5 h-5 text-white/60" />
           <span className="sr-only">Clear</span>
@@ -350,9 +478,11 @@ export function Search() {
 export function SignIn() {
   return (
     <div className="flex justify-center">
-      <Button className="focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">Sign In</Button>
+      <Button className="focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
+        Sign In
+      </Button>
     </div>
-  )
+  );
 }
 
 function SearchIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
@@ -395,107 +525,9 @@ function XIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   );
 }
 
-export function WaterFallComp({ onImageClick, scrollRef }) {
-  // const scrollRef = useRef<HTMLDivElement>(null);
-  /**测试的列表数据 */
-  interface item extends WaterfallItem {
-    /**图片路径 */
-    src: string;
-    /**图片描述 */
-    text: string;
-  }
-
-  const isExtraLargeScreen = useMediaQuery({ minWidth: 2560 });
-  const isLargeScreen = useMediaQuery({ minWidth: 1920, maxWidth: 2559 });
-  const isMediumScreen = useMediaQuery({ minWidth: 1280, maxWidth: 1919 });
-  const isSmallScreen = useMediaQuery({ minWidth: 768, maxWidth: 1279 });
-  const isExtraSmallScreen = useMediaQuery({ maxWidth: 767 });
-
-  const getCols = () => {
-    if (isExtraLargeScreen) return 5;    // 2560px 及以上
-    if (isLargeScreen) return 5;         // 1920px - 2559px
-    if (isMediumScreen) return 4;        // 1280px - 1919px
-    if (isSmallScreen) return 2;         // 768px - 1279px
-    if (isExtraSmallScreen) return 1;    // 767px 及以下
-    return 5; // 默认值
-  };
-
-  // loading data
-  const [imageData, setImageData] = useState([]);
-  const [page, setPage] = useState(1);
-  const [toprange, setToprange] = useState('1M'); // 假设默认值为 '1M'
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const fetchData = useCallback(async (currentPage) => {
-    if (isLoading) return; // 如果正在加载，直接返回
-    setIsLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(
-        `https://heaven-walls-api.vercel.app/api/wallhaven/topwalls?page=${currentPage}&toprange=${toprange}`
-      );
-      const data = await res.json();
-      return data.data;
-    } catch (err) {
-      setError(err.message);
-      return [];
-    } finally {
-      setIsLoading(false);
-    }
-  }, [toprange]);
-
-
-  const loadInitialData = useCallback(async () => {
-    const initialData = await fetchData(1);
-    setImageData(initialData);
-    setPage(1);
-  }, [fetchData]);
-
-  const onLoadMore = useCallback(async () => {
-    if (isLoading) return;
-    const nextPage = page + 1;
-    const newData = await fetchData(nextPage);
-    setImageData(prevData => [...prevData, ...newData]);
-    setPage(nextPage);
-  }, [fetchData, page, isLoading]);
-
-  useEffect(() => {
-    loadInitialData();
-  }, [loadInitialData]);
-
-  return (
-    <main className="w-full overflow-y-auto">
-      <Waterfall
-        scrollRef={scrollRef}
-        cols={getCols()}
-        marginX={10}
-        items={imageData}
-        itemRender={(item, index) => (
-          <Card onClick={() => onImageClick(item)} className="my-2  rounded-xl overflow-hidden">
-            <Image src={item.thumbs.large} className="w-full" />
-          </Card>
-        )}
-        onLoadMore={onLoadMore}
-      />
-      {isLoading && (
-        <div className="flex justify-center items-center py-8">
-          <div className="animate-spin">
-            <Loading />
-          </div>
-        </div>
-      )}
-    </main>
-  );
-}
-
-
-
 export const Logo = () => {
   return (
-    <div
-      className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20 my-6"
-    >
+    <div className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20 my-6">
       <div className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
       <motion.span
         initial={{ opacity: 0 }}
@@ -509,12 +541,8 @@ export const Logo = () => {
 };
 export const LogoIcon = () => {
   return (
-    <div
-      className="font-normal my-6 flex space-x-2 items-center text-sm text-black py-1 relative z-20"
-    >
+    <div className="font-normal my-6 flex space-x-2 items-center text-sm text-black py-1 relative z-20">
       <div className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
     </div>
   );
 };
-
-
