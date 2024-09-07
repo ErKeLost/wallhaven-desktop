@@ -1,6 +1,8 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod system_tray_menu;
+
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 use dirs;
 use futures_util::StreamExt;
@@ -152,23 +154,7 @@ fn change_wallpaper(image_path: String) -> Result<(), String> {
 }
 
 fn main() {
-    let show = CustomMenuItem::new("show".to_string(), "打开面板");
-    let next = CustomMenuItem::new("next".to_string(), "下一张");
-    let previous = CustomMenuItem::new("previous".to_string(), "上一张");
-    let about_app = CustomMenuItem::new("about_app".to_string(), "关于");
-    let quit = CustomMenuItem::new("quit".to_string(), "退出");
-
-    // let tray_menu = SystemTrayMenu::new()
-    //     .add_item(show)
-    //     .add_native_item(SystemTrayMenuItem::Separator)
-    //     .add_item(next)
-    //     .add_item(previous)
-    //     .add_native_item(SystemTrayMenuItem::Separator)
-    //     .add_item(about_app)
-    //     .add_native_item(SystemTrayMenuItem::Separator)
-    //     .add_item(quit);
-    // let system_tray = SystemTray::new().with_menu(tray_menu);
-    tauri::Builder::default()
+    let builder_app = tauri::Builder::default()
         .on_window_event(|event| match event.event() {
             tauri::WindowEvent::CloseRequested { api, .. } => {
                 event.window().hide().unwrap();
@@ -177,68 +163,15 @@ fn main() {
             _ => {}
         })
         .invoke_handler(tauri::generate_handler![download_and_set_wallpaper])
-        // .system_tray(system_tray)
-        // .on_system_tray_event(|app, event| match event {
-        //     SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
-        //         "show" => {
-        //             let window = app.get_window("main").unwrap();
-        //             window.show().unwrap();
-        //             window.set_focus().unwrap();
-        //         }
-        //         "next" => {
-        //             app.emit_all(
-        //                 "change_wallpaper",
-        //                 Payload {
-        //                     message: "next_wallpaper".into(),
-        //                 },
-        //             )
-        //             .unwrap();
-        //         }
-        //         "previous" => {
-        //             app.emit_all(
-        //                 "change_wallpaper",
-        //                 Payload {
-        //                     message: "previous_wallpaper".into(),
-        //                 },
-        //             )
-        //             .unwrap();
-        //         }
-        //         "about_app" => {
-        //             let _ = open(
-        //                 &app.shell_scope(),
-        //                 "https://github.com/Xutaotaotao/wukong-wallpaper",
-        //                 None,
-        //             );
-        //         }
-        //         "quit" => {
-        //             std::process::exit(0);
-        //         }
-        //         _ => {}
-        //     },
-        //     SystemTrayEvent::LeftClick { .. } => {
-        //         #[cfg(target_os = "windows")]
-        //         {
-        //             let window = app.get_window("main").unwrap();
-        //             window.show().unwrap();
-        //             window.set_focus().unwrap();
-        //         }
-        //     }
-        //     _ => {}
-        // })
-        .setup(|app| {
-            let window = app.get_window("main").unwrap();
-            app.listen_global("tauri://activate", move |_event| {
-                window.show().unwrap();
-                window.set_focus().unwrap();
-            });
-            Ok(())
-        })
+        .system_tray(system_tray_menu::menu()) // ✅ 将 `tauri.conf.json` 上配置的图标添加到系统托盘
+        .on_system_tray_event(system_tray_menu::handle_system_tray_event)
         .build(tauri::generate_context!())
-        .expect("error while building tauri application")
-        .run(|_app_handle, event| match event {
-            tauri::RunEvent::ExitRequested { api, .. } => {
-                api.prevent_exit();
-            }
-            _ => {}
-        })
+        .expect("error while building tauri application");
+
+    builder_app.run(|_app_handle, event| match event {
+        tauri::RunEvent::ExitRequested { api, .. } => {
+            api.prevent_exit();
+        }
+        _ => {}
+    });
 }
