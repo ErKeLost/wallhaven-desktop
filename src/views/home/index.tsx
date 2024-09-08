@@ -49,7 +49,7 @@ export default function Dashboard() {
     setIsLoading(true);
     setError(null);
 
-    const baseUrl = "https://wallhaven-api-adny.vercel.app/api/wallhaven";
+    const baseUrl = "https://wallhaven.fun/api/wallhaven";
     try {
       let url;
       if (searchTerm) {
