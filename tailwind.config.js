@@ -71,7 +71,28 @@ module.exports = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      scrollbarGutter: {
+        auto: 'auto',
+        stable: 'stable',
+        always: 'always',
+      },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    function ({ addUtilities }) {
+      const newUtilities = {
+        '.scrollbar-gutter-auto': {
+          'scrollbar-gutter': 'auto',
+        },
+        '.scrollbar-gutter-stable': {
+          'scrollbar-gutter': 'stable',
+        },
+        '.scrollbar-gutter-always': {
+          'scrollbar-gutter': 'stable both-edges',
+        },
+      };
+      return addUtilities(newUtilities);
+    }
+  ],
 }

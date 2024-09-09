@@ -188,7 +188,7 @@ export default function Dashboard() {
   
   return (
     <>
-      <div className="flex-1 w-full overflow-x-hidden" ref={scrollRef}>
+      <div className="flex-1 w-full overflow-x-hidden scrollbar-gutter-stable" ref={scrollRef}>
         <div className="flex w-full justify-between items-center p-4 px-8 mb-6">
           <Search onSearch={handleSearch} />
           <div className="flex items-center gap-20">
