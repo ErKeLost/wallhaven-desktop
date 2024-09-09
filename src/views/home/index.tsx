@@ -33,7 +33,14 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import Loading from "@/components/ui/loading";
 
+const API_BASE_URL = 'https://wallhaven.fun/api/wallhaven'; // 您的API基础URL
+
+export const proxyImageUrl = (originalUrl) => {
+  return `${API_BASE_URL}/proxy-image?url=${encodeURIComponent(originalUrl)}`;
+};
+
 export default function Dashboard() {
+  
   const [progress, setProgress] = useState(0);
   const [imageData, setImageData] = useState([]);
   const [page, setPage] = useState(1);
@@ -74,7 +81,21 @@ export default function Dashboard() {
       }
       const res = await fetch(url);
       const data = await res.json();
-      return data.data;
+      const processedData = data.data.map(item => ({
+        ...item,
+        path: proxyImageUrl(item.path),
+        basePath: item.path,
+        thumbs: {
+          ...item.thumbs,
+          proxyOriginal: proxyImageUrl(item.thumbs.original),
+          proxyLarge: proxyImageUrl(item.thumbs.large),
+          proxySmall: proxyImageUrl(item.thumbs.small)
+        }
+      }));
+      console.log(processedData);
+      
+      return processedData;
+      // return data.data;
     } catch (err) {
       setError(err.message);
       return [];
@@ -274,7 +295,7 @@ export function WaterFallComp({
               onClick={() => onImageClick(item)}
               className="my-2 rounded-xl overflow-hidden"
             >
-              <Image src={item.thumbs.large} className="w-full" />
+              <Image src={item.thumbs.proxyLarge} className="w-full" />
             </Card>
           )}
           onLoadMore={onLoadMore}
