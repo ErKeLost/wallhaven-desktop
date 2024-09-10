@@ -86,7 +86,7 @@ jobs:
 
         env:
           CI: false
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.release_token }}
         with:
           tagName: ${{ github.ref_name }}
           releaseName: Wallhaven ${{ needs.create-release.outputs.APP_VERSION }}
