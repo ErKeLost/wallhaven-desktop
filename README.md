@@ -6,6 +6,10 @@ Create top desktop wallpaper software based on wallhaven api
 
 [download](https://github.com/ErKeLost/wallhaven-desktop/releases/tag/app-v0.0.1)
 
+## 常见问题
+
+mac 安装包已损坏 终端输入 `sudo xattr -rd com.apple.quarantine /Applications/wallhaven.app`
+
 ## Tel Stack
 
 Farm + React19 + Tauri + Shadcn/UI
