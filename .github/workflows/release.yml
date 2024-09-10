@@ -7,6 +7,8 @@ on:
 
 jobs:
   create-release:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,8 +27,6 @@ jobs:
       - name: Generate changelog
         id: create_release
         run: npx changelogithub --draft --name ${{ steps.vars.outputs.tag }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.release_token }}
 
 
 
