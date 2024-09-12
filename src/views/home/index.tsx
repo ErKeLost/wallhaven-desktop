@@ -67,7 +67,7 @@ export default function Dashboard() {
             url = `${baseUrl}/home?page=${currentPage}`;
             break;
           case "Popular":
-            url = `${baseUrl}/topwalls?page=${currentPage}&toprange=1w`;
+            url = `${baseUrl}/topwalls?page=${currentPage}&toprange=1y`;
             break;
           case "Latest":
             url = `${baseUrl}/latest?page=${currentPage}`;
