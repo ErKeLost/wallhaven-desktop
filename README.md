@@ -6,7 +6,7 @@ Create top desktop wallpaper software based on wallhaven api
 
 [download](https://github.com/ErKeLost/wallhaven-desktop/releases/tag/app-v0.0.1)
 
-已经通过 cloudflare 代理加本地网络请求完全代理 wallhaven 壁纸服务, 墙内可以正常访问 wallhaven 所有壁纸
+已经通过 cloudflare 代理加本地网络请求完全代理 wallhaven 壁纸服务 （目前只有壁纸服务做了本地代理，未来扩展其他接口）, 墙内可以正常访问 wallhaven 所有壁纸
 
 ## 常见问题
 
