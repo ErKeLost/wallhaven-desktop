@@ -67,7 +67,7 @@ export default function Dashboard() {
             url = `${baseUrl}/home?page=${currentPage}`;
             break;
           case "Popular":
-            url = `${baseUrl}/topwalls?page=${currentPage}&toprange=1M`;
+            url = `${baseUrl}/topwalls?page=${currentPage}&toprange=1y`;
             break;
           case "Latest":
             url = `${baseUrl}/latest?page=${currentPage}`;
@@ -76,7 +76,7 @@ export default function Dashboard() {
             url = `${baseUrl}/random?page=${currentPage}`;
             break;
           default:
-            url = `${baseUrl}/topwalls?page=${currentPage}&toprange=1M`;
+            url = `${baseUrl}/topwalls?page=${currentPage}&toprange=1w`;
         }
       }
       const res = await fetch(url);
