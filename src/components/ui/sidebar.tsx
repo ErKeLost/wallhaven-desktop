@@ -173,22 +173,22 @@ export const SidebarLink = ({
       )}
       {...props}
     >
-      <div className="flex items-center">
-        {link.icon}
-      </div>
-      <motion.div
-        animate={{
-          display: animate ? (open ? "inline-block" : "none") : "inline-block",
-          opacity: animate ? (open ? 1 : 0) : 1,
-        }}
-        className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
+      <Link
+        to={link.href}
+        className="flex items-center gap-2"
       >
-        <Link
-          to={link.href}
+        {link.icon}
+        <motion.div
+          animate={{
+            display: animate ? (open ? "inline-block" : "none") : "inline-block",
+            opacity: animate ? (open ? 1 : 0) : 1,
+          }}
+          className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
         >
+
           {open && <span>{link.label}</span>}
-        </Link>
-      </motion.div>
+        </motion.div>
+      </Link>
     </div>
   );
 };
