@@ -40,7 +40,7 @@ export const proxyImageUrl = (originalUrl) => {
 };
 
 export default function Dashboard() {
-  
+
   const [progress, setProgress] = useState(0);
   const [imageData, setImageData] = useState([]);
   const [page, setPage] = useState(1);
@@ -93,7 +93,7 @@ export default function Dashboard() {
         }
       }));
       console.log(processedData);
-      
+
       return processedData;
       // return data.data;
     } catch (err) {
@@ -112,16 +112,16 @@ export default function Dashboard() {
   const handleTabClick = useCallback((tab) => {
     // 清空现有数据
     setImageData([]);
-    
+
     // 重置页码为1
     setPage(1);
-    
+
     // 设置加载状态
     setIsLoading(true);
-    
+
     // 更新活动标签
     setActiveTab(tab);
-    
+
     // 加载新数据
     loadInitialData(tab).finally(() => {
       // 加载完成后,结束加载状态
@@ -182,17 +182,17 @@ export default function Dashboard() {
 
   const handleSearch = useCallback(async (searchTerm) => {
     console.log("开始搜索:", searchTerm);
-    
+
     // 立即更新状态，触发重新渲染
     setImageData([]);
     setPage(1);
     setIsLoading(true);
     setLastSearchTerm(searchTerm);
-  
+
     try {
       const searchData = await fetchData("Search", 1, searchTerm);
       console.log("搜索结果:", searchData);
-      
+
       // 使用函数式更新确保我们使用最新的状态
       setImageData(prevData => {
         console.log("更新前的数据:", prevData);
@@ -206,7 +206,7 @@ export default function Dashboard() {
       setIsLoading(false);
     }
   }, [fetchData]);
-  
+
   return (
     <>
       <div className="flex-1 w-full overflow-x-hidden scrollbar-gutter-stable" ref={scrollRef}>
@@ -219,7 +219,12 @@ export default function Dashboard() {
                   key={tab}
                   href="#"
                   className={cn(
-                    "inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                    "inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors",
+                    "hover:bg-muted",
+                    "hover:text-muted-foreground",
+                    "focus-visible:outline-none",
+                    "focus-visible:ring-1",
+                    "focus-visible:ring-ring",
                     activeTab === tab && "bg-muted text-muted-foreground"
                   )}
                   prefetch={false}
@@ -466,8 +471,8 @@ export function Search({ onSearch }) {
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = (e) => {
+    console.log("搜索:", searchTerm);
     if (e.key === "Enter") {
-      onSearch(searchTerm);
     }
   };
 
@@ -477,19 +482,17 @@ export function Search({ onSearch }) {
         <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60" />
         <Input
           placeholder="Search..."
-          className="pl-10 pr-10 rounded-md border border-white/20 bg-transparent py-2 text-sm ring-offset-background placeholder:text-white/60 focus:outline-none focus:ring-0 focus:border-white/20 min-w-[220px]"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyPress={handleSearch}
+          onKeyDown={handleSearch}
         />
         <Button
-          variant="ghost"
+          variant="custom"
           size="icon"
           className="absolute right-2 top-1/2 -translate-y-1/2"
           onClick={() => setSearchTerm("")}
         >
-          <XIcon className="w-5 h-5 text-white/60" />
-          <span className="sr-only">Clear</span>
+          <XIcon className="w-5 h-5" />
         </Button>
       </div>
     </div>
