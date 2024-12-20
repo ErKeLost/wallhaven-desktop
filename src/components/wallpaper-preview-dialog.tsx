@@ -1,6 +1,6 @@
 import Image from "@/components/ui/image";
-import { useState, useCallback, useEffect } from "react";
-import { Copy, Download, Heart } from "lucide-react";
+import { useState, useCallback } from "react";
+import { Copy, Download, Heart, Maximize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import InteractiveResolutionPicker from "./interactiveResolutionPicker";
-import { FollowerPointerCard } from "./ui/following-pointer";
+import { motion } from "framer-motion";
 
 export default function WallpaperPreviewDialog({
   isOpen,
@@ -27,73 +27,67 @@ export default function WallpaperPreviewDialog({
   }, []);
 
   const handleResolutionSelect = useCallback((resolution) => {
-    console.log("Selected resolution:", resolution);
-    // Handle the selected resolution here
-    // For example, you might want to update the image resolution
-    // changePaper({ ...image, resolution: resolution });
     setIsPickerOpen(false);
   }, []);
 
   const handlePickerClose = useCallback(() => {
     setIsPickerOpen(false);
-    // We don't call onClose() here, so the main dialog stays open
   }, []);
-
-
-  useEffect(() => {
-    console.log("isPickerOpen changed:", isPickerOpen);
-  }, [isPickerOpen]);
 
   if (!image) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-
       <DialogContent
-        className="w-[95vw] h-[95vh] sm:w-[90vw] sm:h-[90vh] md:w-[80vw] md:h-[80vh] lg:w-[70vw] lg:h-[70vh] xl:w-[70vw] xl:h-[70vh] max-w-[1200px] max-h-[800px] flex flex-col overflow-hidden">
-
+        className="w-[95vw] sm:w-[90vw] md:w-[80vw] lg:w-[70vw] xl:w-[70vw] max-w-[1200px] flex flex-col overflow-hidden"
+      >
         <DialogHeader className="flex-shrink-0">
           <DialogTitle>壁纸预览 下载进度{progress}</DialogTitle>
           <DialogDescription>高清壁纸 - ID：{image.id}</DialogDescription>
         </DialogHeader>
 
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage: `url(${image.path})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            filter: 'blur(10px)',
-            opacity: 0.6, 
-            transform: 'scale(1.1)',
-          }}
-        />
-        <div
-          className="flex-grow overflow-y-auto mt-4 relative z-1"
-          onClick={handleImageClick}
-        >
-          <Image
-            src={image.path}
-            alt="Wallpaper preview"
-            width="100%"
-            height="100%"
-            className="w-full h-auto object-contain max-h-full rounded-lg shadow-lg cursor-pointer"
+        <div className="relative flex items-center justify-center">
+          {/* 背景模糊效果 */}
+          <div
+            className="absolute inset-0 z-0"
+            style={{
+              backgroundImage: `url(${image.thumbs.proxySmall})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              filter: 'blur(10px)',
+              opacity: 0.6,
+              transform: 'scale(1.1)',
+            }}
           />
-          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300">
-            <span className="text-white text-lg font-semibold">
-              Click to change resolution
-            </span>
+
+          {/* 主图片 */}
+          <div
+            className="relative z-1 flex-grow"
+            onClick={handleImageClick}
+          >
+            <Image
+              src={image.basePath}
+              alt="Wallpaper preview"
+              width="100%"
+              height="auto"
+              className="w-full h-auto object-contain rounded-lg shadow-lg cursor-pointer"
+            />
+            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300">
+              <Maximize2 className="w-8 h-8 text-white" />
+            </div>
           </div>
+
           {isPickerOpen && (
             <InteractiveResolutionPicker
               isOpen={isPickerOpen}
               onClose={handlePickerClose}
               onSelect={handleResolutionSelect}
-              imageUrl={image.path}
+              imageUrl={image.basePath}
               onOpen={() => setIsPickerOpen(true)}
             />
           )}
         </div>
+
         <div className="flex-shrink-0 mt-4 flex justify-between items-center relative z-2">
           <div className="text-sm text-muted-foreground">
             分辨率：{image.resolution || "未知"}
@@ -118,6 +112,6 @@ export default function WallpaperPreviewDialog({
           </div>
         </div>
       </DialogContent>
-    </Dialog >
+    </Dialog>
   );
 }
