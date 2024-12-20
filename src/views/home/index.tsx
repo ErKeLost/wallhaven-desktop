@@ -40,7 +40,7 @@ export const proxyImageUrl = (originalUrl) => {
 };
 
 export default function Dashboard() {
-  
+
   const [progress, setProgress] = useState(0);
   const [imageData, setImageData] = useState([]);
   const [page, setPage] = useState(1);
@@ -93,7 +93,7 @@ export default function Dashboard() {
         }
       }));
       console.log(processedData);
-      
+
       return processedData;
       // return data.data;
     } catch (err) {
@@ -112,16 +112,16 @@ export default function Dashboard() {
   const handleTabClick = useCallback((tab) => {
     // 清空现有数据
     setImageData([]);
-    
+
     // 重置页码为1
     setPage(1);
-    
+
     // 设置加载状态
     setIsLoading(true);
-    
+
     // 更新活动标签
     setActiveTab(tab);
-    
+
     // 加载新数据
     loadInitialData(tab).finally(() => {
       // 加载完成后,结束加载状态
@@ -182,17 +182,17 @@ export default function Dashboard() {
 
   const handleSearch = useCallback(async (searchTerm) => {
     console.log("开始搜索:", searchTerm);
-    
+
     // 立即更新状态，触发重新渲染
     setImageData([]);
     setPage(1);
     setIsLoading(true);
     setLastSearchTerm(searchTerm);
-  
+
     try {
       const searchData = await fetchData("Search", 1, searchTerm);
       console.log("搜索结果:", searchData);
-      
+
       // 使用函数式更新确保我们使用最新的状态
       setImageData(prevData => {
         console.log("更新前的数据:", prevData);
@@ -206,7 +206,7 @@ export default function Dashboard() {
       setIsLoading(false);
     }
   }, [fetchData]);
-  
+
   return (
     <>
       <div className="flex-1 w-full overflow-x-hidden scrollbar-gutter-stable" ref={scrollRef}>
@@ -464,6 +464,7 @@ export function DockActionBar() {
 
 export function Search({ onSearch }) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleSearch = (e) => {
     if (e.key === "Enter") {
@@ -472,25 +473,57 @@ export function Search({ onSearch }) {
   };
 
   return (
-    <div className="rounded-lg p-4 min-w-[220px]">
-      <div className="relative">
-        <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60" />
-        <Input
-          placeholder="Search..."
-          className="pl-10 pr-10 rounded-md border border-white/20 bg-transparent py-2 text-sm ring-offset-background placeholder:text-white/60 focus:outline-none focus:ring-0 focus:border-white/20 min-w-[220px]"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyPress={handleSearch}
-        />
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute right-2 top-1/2 -translate-y-1/2"
-          onClick={() => setSearchTerm("")}
-        >
-          <XIcon className="w-5 h-5 text-white/60" />
-          <span className="sr-only">Clear</span>
-        </Button>
+    <div className="w-full lg:w-auto min-w-[280px]">
+      <div className={cn(
+        "relative group transition-all duration-300",
+        isFocused && "scale-105"
+      )}>
+        <div className={cn(
+          "absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-lg blur opacity-0 transition-opacity duration-300",
+          (isFocused || searchTerm) && "opacity-25"
+        )} />
+
+        <div className="relative flex items-center">
+          <SearchIcon className="absolute left-3 z-10 text-muted-foreground w-5 h-5" />
+          <Input
+            placeholder="搜索壁纸..."
+            className={cn(
+              "w-full pl-10 pr-10 py-2 text-sm bg-background/60 backdrop-blur-sm",
+              "border border-border/50 rounded-lg shadow-sm",
+              "placeholder:text-muted-foreground/70",
+              "focus-visible:ring-1 focus-visible:ring-offset-0 focus-visible:ring-primary/20",
+              "transition-all duration-300",
+              isFocused && "border-primary/50"
+            )}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyPress={handleSearch}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+          />
+          {searchTerm && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn(
+                "absolute right-2 z-10",
+                "hover:bg-background/80 hover:text-foreground",
+                "focus-visible:ring-1 focus-visible:ring-primary focus-visible:ring-offset-0"
+              )}
+              onClick={() => {
+                setSearchTerm("");
+                onSearch("");
+              }}
+            >
+              <XIcon className="w-4 h-4 text-muted-foreground/70" />
+              <span className="sr-only">Clear</span>
+            </Button>
+          )}
+        </div>
+
+        <div className="absolute right-3 top-full mt-1 text-xs text-muted-foreground/70">
+          按 Enter 搜索
+        </div>
       </div>
     </div>
   );
